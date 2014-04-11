@@ -1,6 +1,7 @@
 define([
   'superapi'
 ], function (superapi) {
+  'use strict';
 
   describe('request url', function () {
     it('should append the service url to the baseUrl', function () {
@@ -15,7 +16,7 @@ define([
 
       api.url('foo').should.eql('http://foo.domain.tld/api/foo');
     });
-    
+
   });
 
   describe.skip('request method', function () {
@@ -23,5 +24,5 @@ define([
 
   describe.skip('request headers', function () {
 
-  })
+  });
 });
