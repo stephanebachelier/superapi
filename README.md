@@ -61,3 +61,21 @@ myservice: {
   }
 }
 ```
+
+## Usage
+
+### build library
+
+```
+$ grunt build
+```
+This task build the distribution version either AMD or CommonJS.
+Browser version should be added. (TODO)
+
+### contribute
+
+```
+$ grunt dev
+```
+
+This task will start karma test runner and watch repository for code change.
