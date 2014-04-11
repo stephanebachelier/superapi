@@ -13,5 +13,9 @@ module.exports = {
   grunt: {
     files: ['Gruntfile.js', 'tasks/{,*/}*.js'],
     tasks: ['jscs:grunt', 'lintspaces:grunt']
-  }
+  },
+  test: {
+    files: ['tests/spec/**/*.js'],
+    tasks: ['lint-test', 'karma:unit:run']
+  },
 };
