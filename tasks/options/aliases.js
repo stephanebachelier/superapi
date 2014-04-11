@@ -14,6 +14,10 @@ module.exports = {
   default: [
     'build'
   ],
+  dev: [
+    'karma:unit:start',
+    'watch'
+  ],
   doc: [
     'groc'
   ]
