@@ -1,0 +1,44 @@
+{
+  "name": "superapi",
+  "version": "0.1.0",
+  "description": "Super api wrapper around superagent",
+  "main": "dist/superapi/superapi.js",
+  "scripts": {
+    "test": "karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stephanebachelier/superapi"
+  },
+  "keywords": [
+    "http",
+    "api",
+    "superagent",
+    "wrapper"
+  ],
+  "author": "Stéphane Bachelier <stephane.bachelier@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stephanebachelier/superapi/issues"
+  },
+  "homepage": "https://github.com/stephanebachelier/superapi",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-cli": "~0.1.11",
+    "load-grunt-config": "^0.7.2",
+    "load-grunt-tasks": "~0.2.0",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-jshint": "^0.9.2",
+    "grunt-contrib-uglify": "^0.4.0",
+    "grunt-contrib-watch": "^0.6.0",
+    "grunt-es6-module-transpiler": "~0.5.0",
+    "grunt-jsonlint": "^1.0.4",
+    "grunt-groc": "^0.4.5",
+    "glob": "^3.2.9",
+    "mocha": "^1.18.0",
+    "grunt-lintspaces": "^0.5.0",
+    "grunt-jscs-checker": "^0.4.1"
+  }
+}
