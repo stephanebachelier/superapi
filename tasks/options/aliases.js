@@ -6,6 +6,11 @@ module.exports = {
     'concat:amd',
     'uglify'
   ],
+  'lint-test': [
+    'jshint:test',
+    'jscs:test',
+    'lintspaces:test'
+  ],
   default: [
     'build'
   ],

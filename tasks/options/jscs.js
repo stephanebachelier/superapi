@@ -6,4 +6,5 @@ module.exports = {
     config: '.jscs.json'
   },
   grunt: ['Gruntfile.js', 'tasks/{,*/}*.js'],
+  test: ['tests/spec/{,*/}*.js']
 };
