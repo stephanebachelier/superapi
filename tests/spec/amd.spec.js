@@ -49,6 +49,7 @@ define([
         }
       });
 
+      // fail in PhantomJS as bind not available
       api.url.bind(null, 'foo').should.throw();
     });
   });
