@@ -3,6 +3,32 @@ define([
 ], function (superapi) {
   'use strict';
 
+  describe('configuration', function () {
+    it('should return the service string configuration', function () {
+      var api = superapi.default({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: 'bar'
+        }
+      });
+
+      api.service('foo').should.eql('bar');
+    });
+
+    it('should return the service object configuration', function () {
+      var api = superapi.default({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: {
+            path: '/foo'
+          }
+        }
+      });
+
+      api.service('foo').should.eql({path: '/foo'});
+    });
+  });
+
   describe('request url', function () {
     it('should append the service url to the baseUrl', function () {
       var api = superapi.default({
