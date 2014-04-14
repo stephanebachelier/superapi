@@ -6,6 +6,12 @@ Superapi is a (super) wrapper around the excellent superagent library to help co
 
 The idea is to remove any setup while calling an API. Just provide a service id, some options and callbacks and your set up.
 
+## Notice
+
+This library is built using es6 with [grunt-es-module-transpiler](https://github.com/joefiorini/grunt-es6-module-transpiler), with superagent as it's only dependency.
+
+As a side effect of using es6 notation a module must provide a `default` property which any es5 library does not. So for now, you must use a tiny wrapper around `superagent` which roles is only to export `superagent` in an object with a default property.
+
 ## configuration
 
 Configuration is made by providing a JSON file in the format of:
