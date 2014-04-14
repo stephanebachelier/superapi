@@ -138,4 +138,47 @@ define([
 
   describe.skip('request headers', function () {
   });
+
+  describe('service request headers', function () {
+    it('should add service headers', function () {
+      var api = superapi.default({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: {
+            path: 'bar',
+            headers: {
+              'Content-type': 'json'
+            }
+          }
+        }
+      });
+
+      api.request('foo')._header.should.haveOwnProperty('content-type');
+      api.request('foo')._header['content-type'].should.eql('json');
+    });
+  });
+
+  describe('service request options', function () {
+    it('should add headers options', function () {
+      var api = superapi.default({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: {
+            path: 'bar',
+            options: {
+              type: 'json',
+              accept: 'png'
+            }
+          }
+        }
+      });
+
+      api.request('foo')._header.should.haveOwnProperty('content-type');
+      api.request('foo')._header['content-type'].should.eql('application/json');
+
+      api.request('foo')._header.should.haveOwnProperty('accept');
+      api.request('foo')._header.accept.should.eql('png');
+    });
+  });
+
 });
