@@ -106,9 +106,36 @@ define([
 
       api.request('foo').method.should.eql('DELETE');
     });
+
+    it('should support HEAD', function () {
+      var api = superapi.default({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: {
+            path: 'bar',
+            method: 'HEAD'
+          }
+        }
+      });
+
+      api.request('foo').method.should.eql('HEAD');
+    });
+
+    it('should support PATCH', function () {
+      var api = superapi.default({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: {
+            path: 'bar',
+            method: 'PATCH'
+          }
+        }
+      });
+
+      api.request('foo').method.should.eql('PATCH');
+    });
   });
 
   describe.skip('request headers', function () {
-
   });
 });
