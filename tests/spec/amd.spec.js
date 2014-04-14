@@ -182,4 +182,55 @@ define([
     });
   });
 
+  describe('global request headers', function () {
+    it('should add service headers', function () {
+      var api = superapi.default({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: {
+            path: 'bar',
+          }
+        },
+        headers: {
+          'Content-type': 'json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      api.request('foo')._header.should.haveOwnProperty('content-type');
+      api.request('foo')._header['content-type'].should.eql('json');
+
+      api.request('foo')._header.should.haveOwnProperty('x-requested-with');
+      api.request('foo')._header['x-requested-with'].should.eql('XMLHttpRequest');
+    });
+  });
+
+  describe('global request options', function () {
+    it('should add global headers', function () {
+      var api = superapi.default({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: {
+            path: 'bar',
+          }
+        },
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        options: {
+          type: 'json',
+          accept: 'json'
+        }
+      });
+
+      api.request('foo')._header.should.haveOwnProperty('content-type');
+      api.request('foo')._header['content-type'].should.eql('application/json');
+
+      api.request('foo')._header.should.haveOwnProperty('accept');
+      api.request('foo')._header.accept.should.eql('application/json');
+
+      api.request('foo')._header.should.haveOwnProperty('x-requested-with');
+      api.request('foo')._header['x-requested-with'].should.eql('XMLHttpRequest');
+    });
+  });
 });
