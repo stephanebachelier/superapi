@@ -53,7 +53,59 @@ define([
     });
   });
 
-  describe.skip('request method', function () {
+  describe('request method', function () {
+    it('should default to get', function () {
+      var api = superapi.default({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: 'bar'
+        }
+      });
+
+      api.request('foo').method.should.eql('GET');
+    });
+
+    it('should support POST', function () {
+      var api = superapi.default({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: {
+            path: 'bar',
+            method: 'POST'
+          }
+        }
+      });
+
+      api.request('foo').method.should.eql('POST');
+    });
+
+    it('should support PUT', function () {
+      var api = superapi.default({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: {
+            path: 'bar',
+            method: 'PUT'
+          }
+        }
+      });
+
+      api.request('foo').method.should.eql('PUT');
+    });
+
+    it('should support DELETE', function () {
+      var api = superapi.default({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: {
+            path: 'bar',
+            method: 'DELETE'
+          }
+        }
+      });
+
+      api.request('foo').method.should.eql('DELETE');
+    });
   });
 
   describe.skip('request headers', function () {
