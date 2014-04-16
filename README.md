@@ -16,7 +16,7 @@ As a side effect of using es6 notation a module must provide a `default` propert
 
 Configuration is made by providing a JSON file in the format of:
 
-```json
+```
 {
   baseUrl: "http://foo.domain.tld",
   headers: {
@@ -42,7 +42,7 @@ The idea of this object is to provide some generic headers. As an example supera
 
 This the default headers can be:
 
-```json
+```
 {
   "X-Requested-With": "XMLHttpRequest"
 }
@@ -51,7 +51,7 @@ This the default headers can be:
 #### default options: (object)
 
 Example:
-```json
+```
 {
   type: 'json'
 }
@@ -59,7 +59,7 @@ Example:
 
 ### service configuration
 
-```json
+```
 myservice: {
   path: '/something' // mandatory
   method: 'GET|POST|PUT|DELETE|PATCH' default to 'GET'
