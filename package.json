@@ -2,7 +2,7 @@
   "name": "superapi",
   "version": "0.1.0",
   "description": "Super api wrapper around superagent",
-  "main": "dist/superapi/superapi.js",
+  "main": "dist/commonjs/superapi.js",
   "scripts": {
     "test": "karma start"
   },
