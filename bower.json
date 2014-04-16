@@ -21,8 +21,11 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components",
-    "test",
-    "tests"
+    "tests",
+    "karma.conf.js",
+    "Gruntfile.js",
+    "tasks",
+    "lib",
+    "package.json"
   ]
 }
