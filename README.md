@@ -48,8 +48,14 @@ This the default headers can be:
 }
 ```
 
-TODO
+#### default options: (object)
 
+Example:
+```json
+{
+  type: 'json'
+}
+```
 
 ### service configuration
 
@@ -67,6 +73,10 @@ myservice: {
   }
 }
 ```
+
+### Configuration
+
+`Options`, which are __in fine__ HTTP headers are set before `headers`.
 
 ## Usage
 
