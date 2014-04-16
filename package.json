@@ -53,6 +53,7 @@
     "karma-coverage": "^0.2.1",
     "karma-phantomjs-launcher": "^0.1.4",
     "jshint-stylish": "^0.1.5",
-    "grunt-karma": "^0.8.2"
+    "grunt-karma": "^0.8.2",
+    "grunt-plato": "^1.0.0"
   }
 }
