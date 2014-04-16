@@ -1,0 +1,28 @@
+{
+  "name": "superapi",
+  "version": "0.1.0",
+  "homepage": "https://github.com/stephanebachelier/superapi",
+  "authors": [
+    "Stéphane Bachelier <stephane.bachelier@gmail.com>"
+  ],
+  "description": "Super api wrapper around superagent",
+  "main": "dist/superapi.amd.js",
+  "moduleType": [
+    "amd",
+    "node"
+  ],
+  "keywords": [
+    "http",
+    "api",
+    "superagent",
+    "wrapper"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
