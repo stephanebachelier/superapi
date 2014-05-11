@@ -1,17 +1,28 @@
 /**
   @module superapi
-  @version 0.1.1
+  @version 0.2.0
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
 define("superapi/api",
-  ["superagent","exports"],
+  ["superagent-es6","exports"],
   function(__dependency1__, __exports__) {
     "use strict";
     var superagent = __dependency1__["default"];
 
     function Api(config) {
       this.config = config;
+
+      var self = this;
+      for (var name in config.services) {
+        if (!this.hasOwnProperty(name)) {
+          this[name] = function (data, fn) {
+            return self.request(name, data).end(fn ? fn : function (res) {
+              this.emit(res.ok ? "success" : "error", res);
+            });
+          };
+        }
+      }
     }
 
     Api.prototype = {

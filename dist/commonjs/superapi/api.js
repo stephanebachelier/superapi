@@ -1,8 +1,19 @@
 "use strict";
-var superagent = require("superagent")["default"];
+var superagent = require("superagent-es6")["default"];
 
 function Api(config) {
   this.config = config;
+
+  var self = this;
+  for (var name in config.services) {
+    if (!this.hasOwnProperty(name)) {
+      this[name] = function (data, fn) {
+        return self.request(name, data).end(fn ? fn : function (res) {
+          this.emit(res.ok ? "success" : "error", res);
+        });
+      };
+    }
+  }
 }
 
 Api.prototype = {
