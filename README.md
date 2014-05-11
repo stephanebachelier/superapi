@@ -12,6 +12,22 @@ This library is built using es6 with [grunt-es-module-transpiler](https://github
 
 As a side effect of using es6 notation a module must provide a `default` property which any es5 library does not. So for now, you must use a tiny wrapper around `superagent` which roles is only to export `superagent` in an object with a default property.
 
+The library, thus, does not require `superagent`, but `superagent-es6` which should be like this:
+```
+// AMD version
+define([
+  'superagent'
+],
+
+function (superagent) {
+  return {
+    default: superagent
+  };
+});
+
+```
+This example is available in `tests/vendor/superagent-es6.js`.
+
 ## configuration
 
 Configuration is made by providing a JSON file in the format of:
