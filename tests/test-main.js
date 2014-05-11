@@ -15,9 +15,9 @@ requirejs.config({
   shim: {},
 
   paths: {
-    'superagent-lib': '../tests/vendor/superagent/superagent',
+    superagent: '../tests/vendor/superagent/superagent',
     superapi: 'superapi.amd',
-    superagent: '../tests/vendor/superagent'
+    'superagent-es6': '../tests/vendor/superagent-es6'
   },
 
   // ask Require.js to load these files (all our tests)
