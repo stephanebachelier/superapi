@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.2.2
+  @version 0.2.3
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -14,14 +14,20 @@ define("superapi/api",
       this.config = config;
 
       var self = this;
+      // closure
+      var serviceHandler = function (service) {
+        return function (data, fn) {
+          var req = self.request(service, data).end(fn ? fn : function (res) {
+            req.emit(res.ok ? "success" : "error", res);
+          });
+          return req;
+        };
+      };
       for (var name in config.services) {
-        if (!this.hasOwnProperty(name)) {
-          this[name] = function (data, fn) {
-            var req = self.request(name, data).end(fn ? fn : function (res) {
-              req.emit(res.ok ? "success" : "error", res);
-            });
-            return req;
-          };
+        if (!Object.prototype.hasOwnProperty(this, name)) {
+          // syntatic sugar: install a service handler available on
+          // the api instance with service name
+          self[name] = serviceHandler(name);
         }
       }
     }
