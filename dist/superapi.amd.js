@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.2.1
+  @version 0.2.2
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -17,9 +17,10 @@ define("superapi/api",
       for (var name in config.services) {
         if (!this.hasOwnProperty(name)) {
           this[name] = function (data, fn) {
-            return self.request(name, data).end(fn ? fn : function (res) {
-              this.emit(res.ok ? "success" : "error", res);
+            var req = self.request(name, data).end(fn ? fn : function (res) {
+              req.emit(res.ok ? "success" : "error", res);
             });
+            return req;
           };
         }
       }
