@@ -1,3 +1,14 @@
 {
-  "buildCommand": "grunt build"
+    "verbose": true,
+    "pkgFiles": ["package.json", "bower.json"],
+    "commitMessage": "Release %s",
+    "tagName": "%s",
+    "tagAnnotation": "Release %s",
+    "buildCommand": "grunt",
+    "distBase": "dist",
+    "distFiles": {
+      "dist": ["**/*"],
+      ".": ["bower.json"]
+    },
+    "publish": true
 }
