@@ -1,6 +1,6 @@
 {
   "name": "superapi",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Super api wrapper around superagent",
   "main": "dist/commonjs/superapi.js",
   "scripts": {

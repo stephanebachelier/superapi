@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.2.3
+  @version 0.3.0
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -14,10 +14,27 @@ define("superapi/api",
       this.config = config;
 
       var self = this;
+
       // closure
       var serviceHandler = function (service) {
-        return function (data, fn) {
-          var req = self.request(service, data).end(fn ? fn : function (res) {
+        return function (data, params, fn) {
+          /*
+           * - data (object): request data payload
+           * - params (object): use to replace the tokens in the url
+           * - fn (function): callback to used, with a default which emits 'success' or 'error'
+           *   event depending on res.ok value
+           *
+           * support these different format calls:
+           *
+           *  - function (data, fn)
+           *  - function (data, params, fn)
+           */
+          // function (data, fn) used
+          if ('function' === typeof params && !fn) {
+            params = undefined;
+            fn = params;
+          }
+          var req = self.request(service, data, params).end(fn ? fn : function (res) {
             req.emit(res.ok ? "success" : "error", res);
           });
           return req;
@@ -33,6 +50,8 @@ define("superapi/api",
     }
 
     Api.prototype = {
+      paramsPattern: /:([^/]+)/g,
+
       service: function (id) {
         return this.config.services[id];
       },
@@ -63,7 +82,22 @@ define("superapi/api",
         return url;
       },
 
-      request: function (id, data) {
+      buildUrl: function (url, params) {
+        var tokens = url.match(this.paramsPattern);
+
+        if (!tokens.length) {
+          return url;
+        }
+
+        for (var i = 0, len = tokens.length; i < len; i += 1) {
+          var token = tokens[i];
+          var name = token.substring(1);
+          url = url.replace(token, params[name]);
+        }
+        return url;
+      },
+
+      request: function (id, data, params) {
         var service = this.service(id);
         var method = (typeof service === "string" ? "get" : service.method || "get").toLowerCase();
         // fix for delete being a reserved word
@@ -75,7 +109,13 @@ define("superapi/api",
           throw new Error("Invalid method [" + service.method + "]");
         }
 
-        var _req = request(this.url(id), data);
+        var url = this.url(id);
+
+        if (params) {
+          url = this.buildUrl(url, params);
+        }
+
+        var _req = request(url, data);
         var header, opts;
 
         // add global headers
