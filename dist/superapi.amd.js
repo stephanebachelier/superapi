@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.3.0
+  @version 0.3.1
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -92,7 +92,9 @@ define("superapi/api",
         for (var i = 0, len = tokens.length; i < len; i += 1) {
           var token = tokens[i];
           var name = token.substring(1);
-          url = url.replace(token, params[name]);
+          if (params[name]) {
+            url = url.replace(token, params[name]);
+          }
         }
         return url;
       },
