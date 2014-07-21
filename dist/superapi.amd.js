@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.3.1
+  @version 0.3.2
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -138,6 +138,11 @@ define("superapi/api",
         // add service headers
         for (header in service.headers) {
           _req.set(header, service.headers[header]);
+        }
+
+        // set credentials
+        if (this.config.withCredentials) {
+          _req.withCredentials();
         }
 
         return _req;

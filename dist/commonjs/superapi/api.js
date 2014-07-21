@@ -131,6 +131,11 @@ Api.prototype = {
       _req.set(header, service.headers[header]);
     }
 
+    // set credentials
+    if (this.config.withCredentials) {
+      _req.withCredentials();
+    }
+
     return _req;
   }
 };
