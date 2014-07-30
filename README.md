@@ -26,7 +26,9 @@ function (superagent) {
 });
 
 ```
-This example is available in `tests/vendor/superagent-es6.js`.
+This example is available in CommonJS and AMD format in `dist` folder :
+ * `dist/commonjs/superagent-es6.js`
+ * `dist/amd/superagent-es6.js`
 
 ## configuration
 
