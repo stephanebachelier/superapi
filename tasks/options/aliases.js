@@ -4,6 +4,8 @@ module.exports = {
     'transpile:amd',
     'transpile:commonjs',
     'concat:amd',
+    'copy:superagentcjs',
+    'copy:superagentamd',
     'uglify'
   ],
   'lint-test': [
