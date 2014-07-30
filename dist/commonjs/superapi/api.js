@@ -26,7 +26,7 @@ function Api(config) {
         fn = params;
       }
       var req = self.request(service, data, params).end(fn ? fn : function (res) {
-        req.emit(res.ok ? "success" : "error", res);
+        req.emit(res.ok ? "success" : "error", res, data, params);
       });
       return req;
     };

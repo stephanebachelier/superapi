@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.3.2
+  @version 0.4.0
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -35,7 +35,7 @@ define("superapi/api",
             fn = params;
           }
           var req = self.request(service, data, params).end(fn ? fn : function (res) {
-            req.emit(res.ok ? "success" : "error", res);
+            req.emit(res.ok ? "success" : "error", res, data, params);
           });
           return req;
         };
