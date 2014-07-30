@@ -1,7 +1,7 @@
 module.exports = {
   amd: {
     src: ['tmp/<%= package.name %>/**/*.amd.js', 'tmp/<%= package.name %>.amd.js'],
-    dest: 'dist/<%= package.name %>.amd.js',
+    dest: 'dist/amd/<%= package.name %>.amd.js',
     options: {
       banner: '/**\n' +
               '  @module <%= package.name %>\n' +
@@ -14,7 +14,7 @@ module.exports = {
 
   amdNoVersion: {
     src: ['tmp/<%= package.name %>/**/*.amd.js', 'tmp/<%= package.name %>.amd.js'],
-    dest: 'dist/<%= package.name %>.amd.js'
+    dest: 'dist/amd/<%= package.name %>.amd.js'
   },
 
   deps: {

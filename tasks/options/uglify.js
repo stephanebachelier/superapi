@@ -4,7 +4,7 @@ module.exports = {
       mangle: true
     },
     files: {
-      'dist/<%= package.name %>.amd.min.js': ['dist/<%= package.name %>.amd.js'],
+      'dist/amd/<%= package.name %>.amd.min.js': ['dist/amd/<%= package.name %>.amd.js'],
     }
   }
 };
