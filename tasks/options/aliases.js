@@ -1,12 +1,18 @@
 module.exports = {
   build: [
     'clean',
-    'transpile:amd',
+    // CJS
     'transpile:commonjs',
-    'concat:amd',
     'copy:superagentcjs',
+    // AMD
+    'transpile:amd',
+    'concat:amd',
     'copy:superagentamd',
-    'uglify'
+    'uglify:amd',
+    // Browser
+    'concat:browser',
+    'browser:dist',
+    'uglify:browser'
   ],
   'lint-test': [
     'jshint:test',
