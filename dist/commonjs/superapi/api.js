@@ -1,41 +1,43 @@
 "use strict";
 var superagent = require("superagent-es6")["default"];
 
+// closure
+var serviceHandler = function (service) {
+  return function (data, params, fn) {
+    /*
+     * - data (object): request data payload
+     * - params (object): use to replace the tokens in the url
+     * - fn (function): callback to used, with a default which emits 'success' or 'error'
+     *   event depending on res.ok value
+     *
+     * support these different format calls:
+     *
+     *  - function (data, fn)
+     *  - function (data, params, fn)
+     */
+    // function (data, fn) used
+    if ('function' === typeof params && !fn) {
+      params = undefined;
+      fn = params;
+    }
+    var req = this.request(service, data, params).end(fn ? fn : function (res) {
+      req.emit(res.ok ? "success" : "error", res, data, params);
+    });
+    return req;
+  };
+};
+
 function Api(config) {
   this.config = config;
 
-  var self = this;
+  // create a hash-liked object where all the services handlers are registered
+  this.api = Object.create(null);
 
-  // closure
-  var serviceHandler = function (service) {
-    return function (data, params, fn) {
-      /*
-       * - data (object): request data payload
-       * - params (object): use to replace the tokens in the url
-       * - fn (function): callback to used, with a default which emits 'success' or 'error'
-       *   event depending on res.ok value
-       *
-       * support these different format calls:
-       *
-       *  - function (data, fn)
-       *  - function (data, params, fn)
-       */
-      // function (data, fn) used
-      if ('function' === typeof params && !fn) {
-        params = undefined;
-        fn = params;
-      }
-      var req = self.request(service, data, params).end(fn ? fn : function (res) {
-        req.emit(res.ok ? "success" : "error", res, data, params);
-      });
-      return req;
-    };
-  };
   for (var name in config.services) {
     if (!Object.prototype.hasOwnProperty(this, name)) {
       // syntatic sugar: install a service handler available on
       // the api instance with service name
-      self[name] = serviceHandler(name);
+      this.api[name] = serviceHandler(name).bind(this);
     }
   }
 }
