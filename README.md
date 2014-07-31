@@ -103,13 +103,19 @@ myservice: {
 ```
 $ grunt build
 ```
-This task build the distribution version either AMD or CommonJS.
-Browser version should be added. (TODO)
+This task build the distribution for browser, AMD or CommonJS:
+ * browser: dist/superapi.js
+ * AMD: dist/amd/superapi.amd.js
+ * CommonJS: dist/commonjs/main.js
 
-### contribute
-
+### test (todo!)
 ```
 $ grunt dev
 ```
 
 This task will start karma test runner and watch repository for code change.
+
+
+## CHANGELOG
+
+See [CHANGELOG.md](https://github.com/stephanebachelier/superapi/blob/master/CHANGELOG.md)
