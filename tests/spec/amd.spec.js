@@ -344,4 +344,24 @@ define([
     });
   });
 
+  describe('runtime headers', function () {
+    it('should add header', function () {
+      var api = superapi.default({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: {
+            path: 'bar',
+            headers: {
+              'Content-type': 'application/x-www-form-urlencoded'
+            }
+          }
+        }
+      });
+
+      api.addHeader('csrf', 'my-awesome-csrf-token');
+      api.request('foo')._header.should.haveOwnProperty('csrf');
+      api.request('foo')._header.csrf.should.eql('my-awesome-csrf-token');
+    });
+  });
+
 });
