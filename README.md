@@ -92,6 +92,67 @@ myservice: {
 }
 ```
 
+### with credentials
+
+If you want any cookie to be added back when making an XHR request, you must set the `withCredentials` option onthe XHR. Superapi configuration support the `withCredential` option by adding the special property `withCredentials: true` at the top level:
+
+```
+{
+  baseUrl: "http://foo.domain.tld",
+  headers: {
+    // default headers
+  },
+  services: [
+    { /* service description */ }
+  ],
+  withCredentials: true
+}
+```
+
+The reason while this flag can be set on a service, is that I don't see any use case for this. Feel free to make a PR with a use case.
+
+### Setting headers at runtime.
+
+There may be some use cases where you need to set a header which is not know before running. One example could be some specific header that an API send you that you must return.
+
+An example for this is the CSRF token which in a Single Page Application (SPA) context, are sent by HTTP headers. The use case that I know well is about a login request that sent you back a CSRF token that you will have to send each time you make a request.
+
+The solution is to use the new `addHeader(name, value)` which will record some runtime headers that will be added on each request fired.
+
+An example to illustrate is better than words:
+
+```
+// api configuration
+var myApi = superapi.default({
+  baseUrl: 'http://foo.domain.tld/api',
+  services: {
+    foo: {
+      path: 'bar'
+    }
+  }
+});
+
+// add a header at runtime
+api.addHeader('csrf', 'my-awesome-csrf-token');
+
+// will call http://foo.domain.tld/api/bar with the header `csrf` set to my-awesome-csrf-token'.
+myApi.api.foo();
+```
+
+Another example:
+```
+// on login successful the response contains a csrf value which must be added
+// back on subsequent requests
+superapi.api.login(/* */)
+  .on('success', function (res) {
+    // add runtime header
+    superapi.api.addHeader('csrf', res.body.csrf);
+  });
+
+superapi.api.profile(/* */)
+// you can check that the given header 'csrf' is in the request headers
+```
+
 ### Configuration
 
 `Options`, which are __in fine__ HTTP headers are set before `headers`.
