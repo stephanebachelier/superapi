@@ -3,11 +3,9 @@ module.exports = {
     'clean',
     // CJS
     'transpile:commonjs',
-    'copy:superagentcjs',
     // AMD
     'transpile:amd',
     'concat:amd',
-    'copy:superagentamd',
     'uglify:amd',
     // Browser
     'concat:browser',
