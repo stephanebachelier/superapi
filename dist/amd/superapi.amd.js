@@ -1,15 +1,13 @@
 /**
   @module superapi
-  @version 0.5.0
+  @version 0.6.0
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
 define("superapi/api",
-  ["superagent-es6","exports"],
-  function(__dependency1__, __exports__) {
+  ["exports"],
+  function(__exports__) {
     "use strict";
-    var superagent = __dependency1__["default"];
-
     // closure
     var serviceHandler = function (service) {
       return function (data, params, fn) {
@@ -108,7 +106,12 @@ define("superapi/api",
         if (method === "delete") {
           method = "del";
         }
-        var request = superagent[method];
+
+        if (!this.agent) {
+          throw new Error('missing superagent or any api compatible agent.')
+        }
+
+        var request = this.agent[method];
         if (!request) {
           throw new Error("Invalid method [" + service.method + "]");
         }

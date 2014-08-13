@@ -1,6 +1,4 @@
 "use strict";
-var superagent = require("superagent-es6")["default"];
-
 // closure
 var serviceHandler = function (service) {
   return function (data, params, fn) {
@@ -99,7 +97,12 @@ Api.prototype = {
     if (method === "delete") {
       method = "del";
     }
-    var request = superagent[method];
+
+    if (!this.agent) {
+      throw new Error('missing superagent or any api compatible agent.')
+    }
+
+    var request = this.agent[method];
     if (!request) {
       throw new Error("Invalid method [" + service.method + "]");
     }
