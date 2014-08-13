@@ -10,25 +10,22 @@ The idea is to remove any setup while calling an API. Just provide a service id,
 
 This library is built using es6 with [grunt-es-module-transpiler](https://github.com/joefiorini/grunt-es6-module-transpiler), with superagent as it's only dependency.
 
-As a side effect of using es6 notation a module must provide a `default` property which any es5 library does not. So for now, you must use a tiny wrapper around `superagent` which roles is only to export `superagent` in an object with a default property.
-
-The library, thus, does not require `superagent`, but `superagent-es6` which should be like this:
+The library, thus, does not require `superagent`, but you should give a reference to the superagent `agent` like this.
 ```
-// AMD version
-define([
-  'superagent'
-],
-
-function (superagent) {
-  return {
-    default: superagent
-  };
+// node
+var myApi = superapi.default({
+  /* configuration*/
 });
 
+myApi.agent = require('superagent'); // node
+
+// AMD
+define(['superapi', 'superagent'], function (superapi, superagent) {
+  var api = superapi.default({ /* configuration */ });
+  api.agent = superagent;
+  return api;
+});
 ```
-This example is available in CommonJS and AMD format in `dist` folder :
- * `dist/commonjs/superagent-es6.js`
- * `dist/amd/superagent-es6.js`
 
 ## configuration
 
