@@ -16,7 +16,7 @@ module.exports = function(config) {
     files: [
       {pattern: 'tests/vendor/superagent/superagent.js', included: false},
       {pattern: 'tests/vendor/superagent-es6.js', included: false},
-      {pattern: 'dist/superapi.amd.js', included: false},
+      {pattern: 'dist/amd/superapi.amd.js', included: false},
       {pattern: 'tests/spec/**/*.js', included: false},
 
       'tests/test-main.js',

@@ -16,7 +16,7 @@ requirejs.config({
 
   paths: {
     superagent: '../tests/vendor/superagent/superagent',
-    superapi: 'superapi.amd',
+    superapi: 'amd/superapi.amd',
     'superagent-es6': '../tests/vendor/superagent-es6'
   },
 
