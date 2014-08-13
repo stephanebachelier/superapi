@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.4.1
+  @version 0.5.0
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -120,27 +120,21 @@ define("superapi/api",
         }
 
         var _req = request(url, data);
-        var header, opts;
 
         // add global headers
-        for (header in this.config.headers) {
-          _req.set(header, this.config.headers[header]);
-        }
+        this._setHeaders(_req, this.config.headers);
 
         // add global options to request headers
-        for (opts in this.config.options) {
-          _req[opts](this.config.options[opts]);
-        }
+        this._setOptions(_req, this.config.options);
 
         // add service options to request headers
-        for (opts in service.options) {
-          _req[opts](service.options[opts]);
-        }
+        this._setOptions(_req, service.options);
 
         // add service headers
-        for (header in service.headers) {
-          _req.set(header, service.headers[header]);
-        }
+        this._setHeaders(_req, service.headers);
+
+        // add runtime headers
+        this._setHeaders(_req, this.headers);
 
         // set credentials
         if (this.config.withCredentials) {
@@ -148,6 +142,23 @@ define("superapi/api",
         }
 
         return _req;
+      },
+
+      addHeader: function (name, value) {
+        this.headers = this.headers || {};
+        this.headers[name] = value;
+      },
+
+      _setHeaders: function (req, headers) {
+        for (var header in headers) {
+          req.set(header, headers[header]);
+        }
+      },
+
+      _setOptions: function (req, options) {
+        for (var option in options) {
+          req[option](options[option]);
+        }
       }
     };
 
