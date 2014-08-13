@@ -1,6 +1,7 @@
 define([
-  'superapi'
-], function (superapi) {
+  'superapi',
+  'superagent'
+], function (superapi, superagent) {
   'use strict';
 
   describe('configuration', function () {
@@ -88,7 +89,7 @@ define([
           foo: 'bar'
         }
       });
-
+      api.agent = superagent;
       api.request('foo').method.should.eql('GET');
     });
 
@@ -102,7 +103,7 @@ define([
           }
         }
       });
-
+      api.agent = superagent;
       api.request('foo').method.should.eql('POST');
     });
 
@@ -116,7 +117,7 @@ define([
           }
         }
       });
-
+      api.agent = superagent;
       api.request('foo').method.should.eql('PUT');
     });
 
@@ -130,7 +131,7 @@ define([
           }
         }
       });
-
+      api.agent = superagent;
       api.request('foo').method.should.eql('DELETE');
     });
 
@@ -144,7 +145,7 @@ define([
           }
         }
       });
-
+      api.agent = superagent;
       api.request('foo').method.should.eql('HEAD');
     });
 
@@ -158,7 +159,7 @@ define([
           }
         }
       });
-
+      api.agent = superagent;
       api.request('foo').method.should.eql('PATCH');
     });
   });
@@ -179,7 +180,7 @@ define([
           }
         }
       });
-
+      api.agent = superagent;
       api.request('foo')._header.should.haveOwnProperty('content-type');
       api.request('foo')._header['content-type'].should.eql('json');
     });
@@ -199,7 +200,7 @@ define([
           }
         }
       });
-
+      api.agent = superagent;
       api.request('foo')._header.should.haveOwnProperty('content-type');
       api.request('foo')._header['content-type'].should.eql('application/json');
 
@@ -222,7 +223,7 @@ define([
           'X-Requested-With': 'XMLHttpRequest'
         }
       });
-
+      api.agent = superagent;
       api.request('foo')._header.should.haveOwnProperty('content-type');
       api.request('foo')._header['content-type'].should.eql('json');
 
@@ -248,7 +249,7 @@ define([
           accept: 'json'
         }
       });
-
+      api.agent = superagent;
       api.request('foo')._header.should.haveOwnProperty('content-type');
       api.request('foo')._header['content-type'].should.eql('application/json');
 
@@ -276,7 +277,7 @@ define([
           type: 'json',
         }
       });
-
+      api.agent = superagent;
       api.request('foo')._header.should.haveOwnProperty('content-type');
       api.request('foo')._header['content-type'].should.eql('application/x-www-form-urlencoded');
     });
@@ -296,7 +297,7 @@ define([
           type: 'json'
         }
       });
-
+      api.agent = superagent;
       api.request('foo')._header.should.haveOwnProperty('content-type');
       api.request('foo')._header['content-type'].should.eql('application/x-www-form-urlencoded');
     });
@@ -318,7 +319,7 @@ define([
           'Content-type': 'application/json',
         }
       });
-
+      api.agent = superagent;
       api.request('foo')._header.should.haveOwnProperty('content-type');
       api.request('foo')._header['content-type'].should.eql('application/x-www-form-urlencoded');
     });
@@ -338,7 +339,7 @@ define([
           'Content-type': 'application/json',
         }
       });
-
+      api.agent = superagent;
       api.request('foo')._header.should.haveOwnProperty('content-type');
       api.request('foo')._header['content-type'].should.eql('application/x-www-form-urlencoded');
     });
@@ -357,7 +358,7 @@ define([
           }
         }
       });
-
+      api.agent = superagent;
       api.addHeader('csrf', 'my-awesome-csrf-token');
       api.request('foo')._header.should.haveOwnProperty('csrf');
       api.request('foo')._header.csrf.should.eql('my-awesome-csrf-token');
