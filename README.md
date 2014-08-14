@@ -150,6 +150,30 @@ superapi.api.profile(/* */)
 // you can check that the given header 'csrf' is in the request headers
 ```
 
+### Tokenized url
+
+You often need to parameterize API path where parameters will only be known at runtime. The solution is simple just use `:token`, eg:
+
+```
+// configuration
+superapi.default({
+  services: {
+    editMovie: {
+      path: '/movies/:id',
+      method: 'post'
+    }
+  }
+});
+```
+
+You will need to pass a parameters object that will be replaced.
+
+```
+superapi.api.editMovie(data, {id: 12345});
+```
+
+Voila! easy.
+
 ### Configuration
 
 `Options`, which are __in fine__ HTTP headers are set before `headers`.
