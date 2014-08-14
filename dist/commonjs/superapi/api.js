@@ -76,7 +76,7 @@ Api.prototype = {
   buildUrl: function (url, params) {
     var tokens = url.match(this.paramsPattern);
 
-    if (!tokens.length) {
+    if (!tokens || !tokens.length) {
       return url;
     }
 

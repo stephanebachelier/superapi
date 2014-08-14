@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.6.1
+  @version 0.6.2
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -85,7 +85,7 @@ define("superapi/api",
       buildUrl: function (url, params) {
         var tokens = url.match(this.paramsPattern);
 
-        if (!tokens.length) {
+        if (!tokens || !tokens.length) {
           return url;
         }
 
