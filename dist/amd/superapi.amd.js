@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.6.2
+  @version 0.6.3
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -150,6 +150,12 @@ define("superapi/api",
       addHeader: function (name, value) {
         this.headers = this.headers || {};
         this.headers[name] = value;
+      },
+
+      removeHeader: function (name) {
+        if (this.headers && this.headers[name]) {
+          delete this.headers[name];
+        }
       },
 
       _setHeaders: function (req, headers) {
