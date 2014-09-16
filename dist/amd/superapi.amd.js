@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.6.3
+  @version 0.6.4
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -50,7 +50,7 @@ define("superapi/api",
     }
 
     Api.prototype = {
-      paramsPattern: /:([^/]+)/g,
+      paramsPattern: /:(\w+)/g,
 
       service: function (id) {
         return this.config.services[id];

@@ -41,7 +41,7 @@ function Api(config) {
 }
 
 Api.prototype = {
-  paramsPattern: /:([^/]+)/g,
+  paramsPattern: /:(\w+)/g,
 
   service: function (id) {
     return this.config.services[id];
