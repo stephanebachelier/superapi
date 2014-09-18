@@ -369,7 +369,7 @@ define([
   describe('url tokenization', function () {
     it('should replace tokens in url', function () {
       var api = superapi.default({});
-      var url = api.buildUrl('/:bar/:foo.:baz.json', {
+      var url = api.replaceUrl('/:bar/:foo.:baz.json', {
         bar: 'user',
         foo: 'john',
         baz: 'doe'
