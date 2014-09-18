@@ -367,7 +367,7 @@ define([
 
 
   describe('url tokenization', function () {
-    it('should replace tokens in url', function () {
+    it('replaceUrl - should replace tokens in a given url', function () {
       var api = superapi.default({});
       var url = api.replaceUrl('/:bar/:foo.:baz.json', {
         bar: 'user',
@@ -376,6 +376,23 @@ define([
       });
       url.should.eql('/user/john.doe.json');
     });
+
+    it('buildUrl - should build the url of a service id and replace any tokens', function  () {
+      var api = superapi.default({
+        baseUrl: 'http://example.tld',
+        services: {
+          foo: {
+            path:'/:bar/:foo.:baz.json'
+          }
+        }
+      });
+      var url = api.buildUrl('foo', {
+        bar: 'user',
+        foo: 'john',
+        baz: 'doe'
+      });
+      url.should.eql('http://example.tld/user/john.doe.json')
+    })
   });
 
 });
