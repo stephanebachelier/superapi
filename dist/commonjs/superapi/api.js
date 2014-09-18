@@ -73,7 +73,7 @@ Api.prototype = {
     return url;
   },
 
-  buildUrl: function (url, params) {
+  replaceUrl: function (url, params) {
     var tokens = url.match(this.paramsPattern);
 
     if (!tokens || !tokens.length) {
@@ -87,6 +87,16 @@ Api.prototype = {
         url = url.replace(token, params[name]);
       }
     }
+    return url;
+  },
+
+  buildUrl: function (id, params) {
+    var url = this.url(id);
+
+    if (params) {
+      url = this.replaceUrl(url, params);
+    }
+
     return url;
   },
 
@@ -106,14 +116,8 @@ Api.prototype = {
     if (!request) {
       throw new Error("Invalid method [" + service.method + "]");
     }
-
-    var url = this.url(id);
-
-    if (params) {
-      url = this.buildUrl(url, params);
-    }
-
-    var _req = request(url, data);
+    
+    var _req = request(this.buildUrl(id, params), data);
 
     // add global headers
     this._setHeaders(_req, this.config.headers);
