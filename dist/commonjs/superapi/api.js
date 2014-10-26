@@ -90,17 +90,41 @@ Api.prototype = {
     return url;
   },
 
-  buildUrl: function (id, params) {
+  buildUrlQuery: function (query) {
+    if (!query) {
+      return '';
+    }
+
+    var queryString;
+
+    if (typeof query === "string") {
+      queryString = query;
+    }
+    else {
+      var queryArgs = [];
+      for (var queryArg in query) {
+        queryArgs.push(queryArg + '=' + query[queryArg]);
+      }
+      queryString = queryArgs.join("&");
+    }
+    return queryString ? '?' + queryString : '';
+  },
+
+  buildUrl: function (id, params, query) {
     var url = this.url(id);
 
     if (params) {
       url = this.replaceUrl(url, params);
     }
 
+    if (query) {
+      url += this.buildUrlQuery(query);
+    }
+
     return url;
   },
 
-  request: function (id, data, params) {
+  request: function (id, data, params, query) {
     var service = this.service(id);
     var method = (typeof service === "string" ? "get" : service.method || "get").toLowerCase();
     // fix for delete being a reserved word
@@ -116,8 +140,8 @@ Api.prototype = {
     if (!request) {
       throw new Error("Invalid method [" + service.method + "]");
     }
-    
-    var _req = request(this.buildUrl(id, params), data);
+
+    var _req = request(this.buildUrl(id, params, query), data);
 
     // add global headers
     this._setHeaders(_req, this.config.headers);
