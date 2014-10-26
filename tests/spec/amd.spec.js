@@ -412,7 +412,7 @@ define([
       queryString.should.eql('');
     });
 
-    it('buildUrlQuery - should create the query for an url', function () {
+    it('buildUrl - should build the correct url with any tokens or query args', function () {
       var api = superapi.default({
         baseUrl: 'http://example.tld',
         services: {
@@ -430,6 +430,27 @@ define([
         since: '19700101'
       });
       queryString.should.eql('http://example.tld/user/john.doe.json?content=post&since=19700101');
+    });
+
+    it('request - should build the correct url with any tokens or query args', function () {
+      var api = superapi.default({
+        baseUrl: 'http://example.tld',
+        services: {
+          foo: {
+            path:'/user/:foo.:bar.json'
+          }
+        }
+      });
+      api.agent = superagent;
+
+      var req = api.request('foo', undefined, {
+        foo: 'john',
+        bar: 'doe'
+      }, {
+        content: 'post',
+        since: '19700101'
+      });
+      req.url.should.eql('http://example.tld/user/john.doe.json?content=post&since=19700101');
     });
   });
 });
