@@ -174,6 +174,45 @@ superapi.api.editMovie(data, {id: 12345});
 
 Voila! easy.
 
+### Query string
+
+Superapi also support query arguments. You just need to pass and object to any of the following methods:
+
+* `buildUrl(id, params, query)`
+* `request: function (id, data, params, query)`
+
+Query arguments are not added to configuration for now. I did not found any use cases, except for validation, so I choose to let it opened. So if you need to add query args, just provide an object as the `query` args and it will be used to create the query string.
+
+As an example, if you want to request a route `http://example.tld/user/john.doe.json?content=post&since=19700101`, you can use the following configuration :
+
+```
+var api = superapi.default({
+  baseUrl: 'http://example.tld',
+  services: {
+    foo: {
+      path:'/user/:foo.:bar.json'
+    }
+  }
+});
+api.agent = superagent;
+```
+
+And then you just need to make this function call to request the parameterized url :
+
+```
+var req = api.request('foo', undefined, {
+  foo: 'john',
+  bar: 'doe'
+}, {
+  content: 'post',
+  since: '19700101'
+});
+
+// url will be http://example.tld/user/john.doe.json?content=post&since=19700101
+```
+
+In the previous example second parameter is set to undefined as we are not using data field.
+
 ### Configuration
 
 `Options`, which are __in fine__ HTTP headers are set before `headers`.
