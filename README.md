@@ -190,7 +190,12 @@ This task build the distribution for browser, AMD or CommonJS:
  * AMD: dist/amd/superapi.amd.js
  * CommonJS: dist/commonjs/main.js
 
-### test (todo!)
+### test
+
+Tests are written using `mocha` and run with `karma` test runner.
+
+You can use either use the following `grunt` command or simply run the `karma start` command. The first is provided only to ease development.
+
 ```
 $ grunt dev
 ```
