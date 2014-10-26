@@ -1,3 +1,68 @@
+<a name="0.6.5"></a>
+### 0.6.5 (2014-09-18)
+
+
+#### Features
+
+* **api:** add buildUrl() ([824c6b1e](https://github.com/stephanebachelier/superapi/commit/824c6b1ecad40f1beb414a8c3dc3802a3c9b925e))
+
+
+<a name="0.6.4"></a>
+### 0.6.4 (2014-09-16)
+
+
+#### Bug Fixes
+
+* **params.regexp:** use a generic pattern. ([27fa264c](https://github.com/stephanebachelier/superapi/commit/27fa264c3d2e88ec734679be9c49a83b4da67e2a))
+
+
+<a name="0.6.3"></a>
+### 0.6.3 (2014-09-14)
+
+
+#### Features
+
+* **remove.header:** add removeHeader API call ([8d3cdbe7](https://github.com/stephanebachelier/superapi/commit/8d3cdbe7dc4de16b698c36b2943d2ec05c9a87a9))
+
+
+<a name="0.6.2"></a>
+### 0.6.2 (2014-08-14)
+
+
+
+#### Bug Fixes
+
+* **buildUrl:** guard against undefined tokens ([f6454d4f](https://github.com/stephanebachelier/superapi/commit/f6454d4f34e25f8e19a50ed0a63a3c28b0854294))
+
+
+<a name="0.6.1"></a>
+### 0.6.1 (2014-08-14)
+
+
+<a name="0.6.0"></a>
+### 0.6.0 (2014-08-14)
+
+
+#### Features
+
+* **superagent:** set superagent as an external dependencies ([ca5a12d4](https://github.com/stephanebachelier/superapi/commit/ca5a12d48cc5bfffb9b3d64619ffe5bd968d96cd))
+
+
+#### Breaking Changes
+
+* remove superagent-e6 dependency
+ ([ca5a12d4](https://github.com/stephanebachelier/superapi/commit/ca5a12d48cc5bfffb9b3d64619ffe5bd968d96cd))
+
+
+<a name="0.5.0"></a>
+### 0.5.0 (2014-08-14)
+
+
+#### Features
+
+* **headers:** add runtime headers ([5c51a62a](https://github.com/stephanebachelier/superapi/commit/5c51a62ae05317b0ca189c06affdd515cf05fc49))
+
+
 <a name="0.4.1"></a>
 ### 0.4.1 (2014-07-31)
 
