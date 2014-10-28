@@ -27,5 +27,8 @@
     "tasks",
     "lib",
     "package.json"
-  ]
+  ],
+  "dependencies": {
+    "superagent": "~0.20.0"
+  }
 }

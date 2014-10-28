@@ -395,7 +395,7 @@ define([
     })
   });
 
-  describe.only('url query', function () {
+  describe('url query', function () {
     it('buildUrlQuery - should create the query for an url', function () {
       var api = superapi.default({});
       var queryString = api.buildUrlQuery({

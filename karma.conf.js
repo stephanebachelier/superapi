@@ -14,7 +14,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      {pattern: 'tests/vendor/superagent/superagent.js', included: false},
+      {pattern: 'bower_components/superagent/superagent.js', included: false},
       {pattern: 'dist/amd/superapi.amd.js', included: false},
       {pattern: 'tests/spec/**/*.js', included: false},
 
