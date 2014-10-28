@@ -481,4 +481,50 @@ define([
       server.restore();
     });
   });
+
+  describe('uploading', function() {
+
+    it('can be done with a multipart/form-data request', function() {
+      var api = superapi.default({
+        baseUrl: 'api',
+        services: {
+          upload: {
+            path: 'upload',
+            method: 'POST',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          }
+        }
+      });
+
+      var fileData = {
+        file: new Image()
+      };
+      //black pixel
+      fileData.file.src = 'data:image/png;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
+
+      api.agent = superagent;
+
+
+
+      var attachFile = function(request) {
+        delete(request.header['Content-Type']);
+        request.attach('image', fileData, 'stuff.jpg');
+      };
+      var onResponse = function(response) {
+        var request = response.req;
+        request.hasOwnProperty('_formData');
+        // We should test that
+        // request.header['Content-type'] matches
+        // Content-Type:multipart/form-data; boundary=----WebKitFormBoundary...
+        // But it is not set back as it is a navigator behavior.
+        // A recieving server should check that.
+      };
+
+
+      api.api.upload({}, undefined, onResponse, attachFile);
+
+    });
+  });
 });
