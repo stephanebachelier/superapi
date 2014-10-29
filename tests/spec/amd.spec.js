@@ -452,5 +452,33 @@ define([
       });
       req.url.should.eql('http://example.tld/user/john.doe.json?content=post&since=19700101');
     });
+
+    // this test is disabled for now as Sinon does not works well with AMD loaded
+    // sinon 1.11.1 version does not play well with Karma RequireJS.
+    it.skip('api sugar should build the correct url with any tokens or query args', function () {
+      var api = superapi.default({
+        baseUrl: 'http://example.tld',
+        services: {
+          foo: {
+            path:'/user/:foo.:bar.json'
+          }
+        }
+      });
+      api.agent = superagent;
+
+      // add sinon to fake the XHR call
+      var server = sinon.fakeServer.create();
+
+      var req = api.api.foo(undefined, {
+        foo: 'john',
+        bar: 'doe'
+      }, {
+        content: 'post',
+        since: '19700101'
+      });
+      req.url.should.eql('http://example.tld/user/john.doe.json?content=post&since=19700101');
+
+      server.restore();
+    });
   });
 });
