@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.6.6
+  @version 0.7.0
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -9,25 +9,26 @@ define("superapi/api",
   function(__exports__) {
     "use strict";
     // closure
-    var serviceHandler = function (service) {
-      return function (data, params, fn) {
+    var serviceHandler = function(service) {
+      return function(data, params, query, callback, before) {
         /*
          * - data (object): request data payload
          * - params (object): use to replace the tokens in the url
-         * - fn (function): callback to used, with a default which emits 'success' or 'error'
+         * - query (object): use to build the query string appended to the url
+         * - callback (function): callback to use, with a default which emits 'success' or 'error'
          *   event depending on res.ok value
+         * - before (function): callback to use, to tweak req if needed.
          *
-         * support these different format calls:
+         * supports:
          *
-         *  - function (data, fn)
-         *  - function (data, params, fn)
+         *  - function (data, params, query, callback, before)
          */
-        // function (data, fn) used
-        if ('function' === typeof params && !fn) {
-          params = undefined;
-          fn = params;
+
+        var req = this.request(service, data, params, query);
+        if ('function' === typeof before) {
+          before(req);
         }
-        var req = this.request(service, data, params).end(fn ? fn : function (res) {
+        req.end(callback ? callback : function(res) {
           req.emit(res.ok ? "success" : "error", res, data, params);
         });
         return req;
@@ -52,11 +53,11 @@ define("superapi/api",
     Api.prototype = {
       paramsPattern: /:(\w+)/g,
 
-      service: function (id) {
+      service: function(id) {
         return this.config.services[id];
       },
 
-      url: function (id) {
+      url: function(id) {
         var url = this.config.baseUrl;
         var resource = this.service(id);
 
@@ -82,7 +83,7 @@ define("superapi/api",
         return url;
       },
 
-      replaceUrl: function (url, params) {
+      replaceUrl: function(url, params) {
         var tokens = url.match(this.paramsPattern);
 
         if (!tokens || !tokens.length) {
@@ -99,7 +100,7 @@ define("superapi/api",
         return url;
       },
 
-      buildUrlQuery: function (query) {
+      buildUrlQuery: function(query) {
         if (!query) {
           return '';
         }
@@ -108,8 +109,7 @@ define("superapi/api",
 
         if (typeof query === "string") {
           queryString = query;
-        }
-        else {
+        } else {
           var queryArgs = [];
           for (var queryArg in query) {
             queryArgs.push(queryArg + '=' + query[queryArg]);
@@ -119,7 +119,7 @@ define("superapi/api",
         return queryString ? '?' + queryString : '';
       },
 
-      buildUrl: function (id, params, query) {
+      buildUrl: function(id, params, query) {
         var url = this.url(id);
 
         if (params) {
@@ -133,9 +133,10 @@ define("superapi/api",
         return url;
       },
 
-      request: function (id, data, params, query) {
+      request: function(id, data, params, query) {
         var service = this.service(id);
-        var method = (typeof service === "string" ? "get" : service.method || "get").toLowerCase();
+        var method = (typeof service === "string" ? "get" : service.method ||
+          "get").toLowerCase();
         // fix for delete being a reserved word
         if (method === "delete") {
           method = "del";
@@ -175,24 +176,24 @@ define("superapi/api",
         return _req;
       },
 
-      addHeader: function (name, value) {
+      addHeader: function(name, value) {
         this.headers = this.headers || {};
         this.headers[name] = value;
       },
 
-      removeHeader: function (name) {
+      removeHeader: function(name) {
         if (this.headers && this.headers[name]) {
           delete this.headers[name];
         }
       },
 
-      _setHeaders: function (req, headers) {
+      _setHeaders: function(req, headers) {
         for (var header in headers) {
           req.set(header, headers[header]);
         }
       },
 
-      _setOptions: function (req, options) {
+      _setOptions: function(req, options) {
         for (var option in options) {
           req[option](options[option]);
         }
