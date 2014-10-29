@@ -523,7 +523,7 @@ define([
       };
 
 
-      api.api.upload({}, undefined, onResponse, attachFile);
+      api.api.upload({}, undefined, undefined, onResponse, attachFile);
 
     });
   });
