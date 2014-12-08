@@ -452,11 +452,15 @@ define([
       });
       req.url.should.eql('http://example.tld/user/john.doe.json?content=post&since=19700101');
     });
+  });
 
-    // this test is disabled for now as Sinon does not works well with AMD loaded
-    // sinon 1.11.1 version does not play well with Karma RequireJS.
-    it('api sugar should build the correct url with any tokens or query args', function (done) {
-      var api = superapi.default({
+
+  describe('request', function () {
+    var api;
+    var server;
+
+    beforeEach(function () {
+      api = superapi.default({
         baseUrl: 'http://example.tld',
         services: {
           foo: {
@@ -467,8 +471,16 @@ define([
       api.agent = superagent;
 
       // add sinon to fake the XHR call
-      var server = sinon.fakeServer.create();
+      server = sinon.fakeServer.create();
+    });
 
+    afterEach(function () {
+      server.restore();
+      server = null;
+      api = null;
+    });
+
+    it('api sugar should build the correct url with any tokens or query args', function (done) {
       // configure response
       server.respondWith('GET',
         'http://example.tld/user/john.doe.json?content=post&since=19700101',
@@ -486,7 +498,6 @@ define([
         }
       }).then(function (req) {
         req.url.should.eql('http://example.tld/user/john.doe.json?content=post&since=19700101');
-        server.restore();
         done();
       });
 
