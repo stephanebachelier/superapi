@@ -1,28 +1,45 @@
 "use strict";
 // closure
 var serviceHandler = function(service) {
-  return function(data, params, query, callback, before) {
-    /*
-     * - data (object): request data payload
-     * - params (object): use to replace the tokens in the url
-     * - query (object): use to build the query string appended to the url
-     * - callback (function): callback to use, with a default which emits 'success' or 'error'
-     *   event depending on res.ok value
-     * - before (function): callback to use, to tweak req if needed.
-     *
-     * supports:
-     *
-     *  - function (data, params, query, callback, before)
-     */
+  /*
+   * Below are the supported options for the serviceHandler:
+   *
+   * - data (object): request data payload
+   * - params (object): use to replace the tokens in the url
+   * - query (object): use to build the query string appended to the url
+   * - callback (function): callback to use, with a default which emits 'success' or 'error'
+   *   event depending on res.ok value
+   * - edit (function): callback to use, to tweak req if needed.
+   */
+  return function(options) {
+    options = options || {};
+    var data = options.data || {};
+    var params = options.params || {};
+    var query = options.query || {};
+    var callback = options.callback || null;
+    var edit = options.edit || null;
 
     var req = this.request(service, data, params, query);
-    if ('function' === typeof before) {
-      before(req);
+
+    // edit request if function defined
+    if (edit && "function" === typeof edit) {
+      edit(req);
     }
-    req.end(callback ? callback : function(res) {
-      req.emit(res.ok ? "success" : "error", res, data, params);
+
+    var resolver = {};
+
+    var p = new Promise(function (resolve, reject) {
+      resolver = {
+        resolve: resolve,
+        reject: reject
+      };
     });
-    return req;
+
+    req.end(callback ? callback : function(res) {
+      resolver[res.ok ? "resolve" : "reject"](req, res, options);
+    });
+
+    return p;
   };
 };
 
