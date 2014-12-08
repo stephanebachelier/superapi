@@ -1,3 +1,40 @@
+<a name="0.8.0"></a>
+## 0.8.0 (2014-12-08)
+
+
+#### Features
+
+* **serviceHandler:**
+  * switch to promise ([6973fb8c](https://github.com/stephanebachelier/superapi/commit/6973fb8c561334e5c18f97aa96256ce32972b4d9))
+  * change signature to use object ([82ae9dbc](https://github.com/stephanebachelier/superapi/commit/82ae9dbcc6c78bb9203fd59f6aa47bae091b9be4))
+* **servicehandler:** set default to null to avoid truthy test ([c5a83b24](https://github.com/stephanebachelier/superapi/commit/c5a83b24ec2259c51f9bd36f95c5eaed71c9a34d))
+
+
+<a name="0.7.0"></a>
+## 0.7.0 (2014-10-29)
+
+
+#### Bug Fixes
+
+* **serviceHandler:** add query args to service handler sugar ([b859ce9b](https://github.com/stephanebachelier/superapi/commit/b859ce9b7d42e16fa8aec2cad4e9e93e0d3128d9))
+* **tests:** change request calling as api changed ([213e044b](https://github.com/stephanebachelier/superapi/commit/213e044ba43e4931a24652c7cc4e2a3a718df5af))
+
+
+#### Features
+
+* **before:** add before clb to do stuff before .end ([e7f3b49a](https://github.com/stephanebachelier/superapi/commit/e7f3b49aa9c52ffce41fc6c7d7f3d565c90c88f5))
+
+
+<a name="0.6.6"></a>
+## 0.6.6 (2014-10-26)
+
+
+#### Features
+
+* **query:** support to add query args to url ([cdcaced3](https://github.com/stephanebachelier/superapi/commit/cdcaced37ffc0b8f78bfab3872b5a5b7dc36dabc))
+* **request:** add support for query string ([ab720d6f](https://github.com/stephanebachelier/superapi/commit/ab720d6f01f2419485f6eda8dee1f2b2a6263102))
+
+
 <a name="0.6.5"></a>
 ### 0.6.5 (2014-09-18)
 
