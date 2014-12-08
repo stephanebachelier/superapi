@@ -503,6 +503,37 @@ define([
 
       server.respond();
     });
+
+    it('should be possible to modify request in edit handler', function () {
+      var fakeUrl = 'http://example.tld/user/johnny.depp.json?content=post&since=19700101';
+
+      server.respondWith('GET', fakeUrl,
+        [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+      );
+
+      var editFn = sinon.spy(function (req) {
+        // change url
+        debugger
+        req.url = fakeUrl
+      });
+
+      api.api.foo({
+        params: {
+          foo: 'john',
+          bar: 'doe'
+        },
+        query: {
+          content: 'post',
+          since: '19700101'
+        },
+        edit: editFn
+      }).then(function (req) {
+        editFn.should.have.been.called;
+        done();
+      });
+
+      server.respond();
+    });
   });
 
   describe('uploading', function() {
