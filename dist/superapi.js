@@ -76,7 +76,7 @@ define("superapi/api",
         });
 
         req.end(callback ? callback : function(res) {
-          resolver[!res.error ? "resolve" : "reject"](req, res, options);
+          resolver[!res.error ? "resolve" : "reject"](res);
         });
 
         return p;

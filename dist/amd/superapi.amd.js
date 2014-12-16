@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.8.1
+  @version 0.8.2
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -45,7 +45,7 @@ define("superapi/api",
         });
 
         req.end(callback ? callback : function(res) {
-          resolver[!res.error ? "resolve" : "reject"](req, res, options);
+          resolver[!res.error ? "resolve" : "reject"](res);
         });
 
         return p;
