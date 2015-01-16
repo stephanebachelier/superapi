@@ -125,7 +125,12 @@ define("superapi/api",
             throw new Error("path is not defined for route $" + id);
           }
 
-          url += path[0] === "/" ? path : "/" + path;
+          if (path.match(/^https?:\/\//)) {
+            url = path;
+          }
+          else {
+            url += path[0] === "/" ? path : "/" + path;
+          }
         }
 
         return url;
@@ -150,7 +155,7 @@ define("superapi/api",
 
       buildUrlQuery: function(query) {
         if (!query) {
-          return '';
+          return "";
         }
 
         var queryString;
@@ -160,11 +165,11 @@ define("superapi/api",
         } else {
           var queryArgs = [];
           for (var queryArg in query) {
-            queryArgs.push(queryArg + '=' + query[queryArg]);
+            queryArgs.push(queryArg + "=" + query[queryArg]);
           }
           queryString = queryArgs.join("&");
         }
-        return queryString ? '?' + queryString : '';
+        return queryString ? "?" + queryString : "";
       },
 
       buildUrl: function(id, params, query) {
@@ -191,7 +196,7 @@ define("superapi/api",
         }
 
         if (!this.agent) {
-          throw new Error('missing superagent or any api compatible agent.')
+          throw new Error("missing superagent or any api compatible agent.");
         }
 
         var request = this.agent[method];
