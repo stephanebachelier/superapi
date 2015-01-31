@@ -10,6 +10,7 @@ var serviceHandler = function(service) {
    * - callback (function): callback to use, with a default which emits 'success' or 'error'
    *   event depending on res.ok value
    * - edit (function): callback to use, to tweak req if needed.
+   * - timeout (number): milli seconds before a timeout error is thrown
    */
   return function(options) {
     options = options || {};
@@ -18,8 +19,13 @@ var serviceHandler = function(service) {
     var query = options.query || {};
     var callback = options.callback || null;
     var edit = options.edit || null;
+    var timeout = options.timeout || 20000;
 
     var req = this.request(service, data, params, query);
+
+    if (timeout) {
+      req.timeout(timeout);
+    }
 
     // edit request if function defined
     if (edit && "function" === typeof edit) {
