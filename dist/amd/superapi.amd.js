@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.8.4
+  @version 0.8.5
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -30,11 +30,8 @@ define("superapi/api",
         var edit = options.edit || null;
         var timeout = options.timeout || 20000;
 
+        var self = this;
         var req = this.request(service, data, params, query);
-
-        if (timeout) {
-          req.timeout(timeout);
-        }
 
         // edit request if function defined
         if (edit && "function" === typeof edit) {
@@ -52,6 +49,21 @@ define("superapi/api",
 
         req.end(callback ? callback : function(res) {
           resolver[!res.error ? "resolve" : "reject"](res);
+        });
+
+        if (timeout) {
+          req.xhr.timeout = timeout;
+          req.xhr.ontimeout = function () {
+            req.aborted = true;
+            var response = new self.agent.Response(req);
+            response.timeout = true;
+            response.error = true;
+            req.emit('abort', response);
+          }
+        }
+
+        req.on('abort', function (res) {
+          resolver.reject(res);
         });
 
         return p;
