@@ -1,3 +1,45 @@
+<a name="0.8.5"></a>
+### 0.8.5 (2015-01-31)
+
+#### Features
+
+* **timeout:** trick superagent logic to return a timeout error ([03c636c4](https://github.com/stephanebachelier/superapi/commit/03c636c4870f43ecccec97b269f50b8b6df10932))
+
+
+<a name="0.8.4"></a>
+### 0.8.4 (2015-01-31)
+
+#### Features
+
+* **timeout:** add support for timeout ([c0a5d3be](https://github.com/stephanebachelier/superapi/commit/c0a5d3be0cdaeede4d4f1591d1ff5ae6e8f7ed77))
+
+
+<a name="0.8.3"></a>
+### 0.8.3 (2015-01-16)
+
+
+#### Features
+
+* **buildUrl:** do not prepend baseUrl if path is already an url ([fbaa0418](https://github.com/stephanebachelier/superapi/commit/fbaa04189cb977f455da65cfaee4b1bf87b9dcc8))
+
+
+<a name="0.8.2"></a>
+### 0.8.2 (2015-12-16)
+
+
+#### Bug Fixes
+
+* **end.response:** resolve response as first argument ([60d8702c](https://github.com/stephanebachelier/superapi/commit/60d8702c89b564d026d23fbde7e7e37fb397c25b))
+
+
+<a name="0.8.1"></a>
+### 0.8.1 (2014-12-10)
+
+
+#### Bug Fixes
+
+* **result:** change condition to not return an error on 3xx ([9b50aae0](https://github.com/stephanebachelier/superapi/commit/9b50aae0c5e50fd973f9beaee9a5aca7a4dc3737))
+
 <a name="0.8.0"></a>
 ## 0.8.0 (2014-12-08)
 
