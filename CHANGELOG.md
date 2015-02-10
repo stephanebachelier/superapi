@@ -1,3 +1,11 @@
+<a name="0.8.6"></a>
+### 0.8.6 (2015-02-10)
+
+#### Bug fixes
+
+* **request:**: don't pass data to delete ([1b306ca2](https://github.com/stephanebachelier/superapi/commit/1b306ca2a3339da3ea759702baccdfdbc4fb20a7))
+
+
 <a name="0.8.5"></a>
 ### 0.8.5 (2015-01-31)
 
