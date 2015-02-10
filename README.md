@@ -245,3 +245,10 @@ This task will start karma test runner and watch repository for code change.
 ## CHANGELOG
 
 See [CHANGELOG.md](https://github.com/stephanebachelier/superapi/blob/master/CHANGELOG.md)
+
+## Contributors
+
+ * [Adrien Delorme](https://github.com/azr)
+ * [Tuomas Peippo](https://github.com/tume)
+
+See [details](https://github.com/stephanebachelier/superapi/graphs/contributors)
