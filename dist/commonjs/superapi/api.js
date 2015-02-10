@@ -173,6 +173,11 @@ Api.prototype = {
       method = "del";
     }
 
+    // don't send data with delete
+    if (method === "del") {
+      data = undefined;
+    }
+
     if (!this.agent) {
       throw new Error("missing superagent or any api compatible agent.");
     }

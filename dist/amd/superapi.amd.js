@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.8.5
+  @version 0.8.6
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -180,6 +180,11 @@ define("superapi/api",
         // fix for delete being a reserved word
         if (method === "delete") {
           method = "del";
+        }
+
+        // don't send data with delete
+        if (method === "del") {
+          data = undefined;
         }
 
         if (!this.agent) {
