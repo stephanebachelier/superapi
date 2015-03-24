@@ -1,3 +1,15 @@
+<a name="0.9.0"></a>
+### 0.9.0 (2015-03-20)
+
+#### Bug Fixes
+
+* **request:** fix issue on unsupported method message ([d95e631e](https://github.com/stephanebachelier/superapi/commit/d95e631e7493e9d0704955c5128be1af5caf483d))
+
+
+#### Features
+
+* **request:** split method in request and sendRequest ([9ed00855](https://github.c
+
 <a name="0.8.6"></a>
 ### 0.8.6 (2015-02-10)
 
