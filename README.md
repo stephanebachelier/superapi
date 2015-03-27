@@ -6,6 +6,12 @@ Superapi is a (super) wrapper around the excellent superagent library to help co
 
 The idea is to remove any setup while calling an API. Just provide a service id, some options and callbacks and your set up.
 
+Briefly `superapi` is a small library to never configure XHR calls in your code. Why ? Because :
+- it makes reading harder,
+- you will possibly introduce bugs are you will always write the same code to configure all XHR
+- difficult to override for different environments
+- hardcoded url or paths in your code, which implies that for any changes in URL, paths or whatever, let's say send in url form encoded format instead of JSON, you will have to dig into your code base to make changes.
+
 ## Notice
 
 This library is built using es6 with [grunt-es-module-transpiler](https://github.com/joefiorini/grunt-es6-module-transpiler), with superagent as it's only dependency.
