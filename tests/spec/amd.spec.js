@@ -535,6 +535,31 @@ define([
     });
   });
 
+  describe('send request', function () {
+    var api;
+
+    beforeEach(function () {
+      api = superapi.default();
+    });
+
+    afterEach(function () {
+      api = null;
+    });
+
+    it('should throw if no agent defined', function () {
+      should.Throw(function () {
+        api.sendRequest();
+      }, 'missing superagent');
+    });
+
+    it('should throw if no method defined', function () {
+      api.agent = superagent;
+      should.Throw(function () {
+        api.sendRequest();
+      }, 'Unsupported method');
+    });
+  });
+
   describe('uploading', function() {
 
     it.skip('can be done with a multipart/form-data request', function() {
