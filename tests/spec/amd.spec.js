@@ -504,7 +504,7 @@ define([
       server.respond();
     });
 
-    it('should be possible to modify request in edit handler', function () {
+    it('should be possible to modify request in edit handler', function (done) {
       var fakeUrl = 'http://example.tld/user/johnny.depp.json?content=post&since=19700101';
 
       server.respondWith('GET', fakeUrl,
