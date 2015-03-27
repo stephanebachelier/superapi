@@ -1,3 +1,13 @@
+<a name="0.10.0"></a>
+## 0.10.0 (2015-03-27)
+
+
+#### Features
+
+* **api:**
+  * support runtime configuration ([f905786c](https://github.com/stephanebachelier/superapi/commit/f905786c0f08c8ad0b0801bab2f2e561f063c060))
+  * support no configuration at init ([78427ada](https://github.com/stephanebachelier/superapi/commit/78427ada9611eade21f9b65ec5abd479827c81ab))
+
 <a name="0.9.0"></a>
 ### 0.9.0 (2015-03-20)
 
