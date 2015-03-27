@@ -5,6 +5,27 @@ define([
   'use strict';
 
   describe('configuration', function () {
+    it('should support no configuration at initialization', function () {
+      should.not.Throw(function () {
+        var api = superapi.default();
+        expect(api.config).to.be.empty;
+        expect(api.api).to.be.empty;
+      })
+    });
+
+    it('should support configuration at runtime', function () {
+      var api = superapi.default();
+      api.configure({
+        baseUrl: 'http://foo.domain.tld/api',
+        services: {
+          foo: 'bar'
+        }
+      });
+      api.config.should.haveOwnProperty('baseUrl')
+      api.service('foo').should.eql('bar');
+      api.api.foo.should.be.an.instanceof(Function)
+    });
+
     it('should return the service string configuration', function () {
       var api = superapi.default({
         baseUrl: 'http://foo.domain.tld/api',
