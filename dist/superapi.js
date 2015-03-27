@@ -102,22 +102,31 @@ define("superapi/api",
     };
 
     function Api(config) {
-      this.config = config;
-
       // create a hash-liked object where all the services handlers are registered
       this.api = Object.create(null);
 
-      for (var name in config.services) {
-        if (!Object.prototype.hasOwnProperty(this, name)) {
-          // syntatic sugar: install a service handler available on
-          // the api instance with service name
-          this.api[name] = serviceHandler(name).bind(this);
-        }
-      }
+      // support undefined configuration in constructor
+      this.configure(config);
     }
 
     Api.prototype = {
       paramsPattern: /:(\w+)/g,
+
+      configure: function (config) {
+        this.config = config || {};
+
+        if (!config) {
+          return;
+        }
+
+        for (var name in config.services) {
+          if (!Object.prototype.hasOwnProperty(this, name)) {
+            // syntatic sugar: install a service handler available on
+            // the api instance with service name
+            this.api[name] = serviceHandler(name).bind(this);
+          }
+        }
+      },
 
       service: function(id) {
         return this.config.services[id];
@@ -229,7 +238,9 @@ define("superapi/api",
           method = "del";
         }
 
-        // don't send data with delete
+        // reset data for delete operation
+        // kind of hack as request.del signature is different from others being `function(url, fn)`
+        // instead of `function(url, data, fn)`
         if (method === "del") {
           data = undefined;
         }
