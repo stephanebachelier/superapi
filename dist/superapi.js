@@ -78,6 +78,8 @@ define("superapi/api",
           };
         });
 
+        req.on('error', resolver.reject);
+
         req.end(callback ? callback : function(res) {
           resolver[!res.error ? "resolve" : "reject"](res);
         });
