@@ -2,7 +2,7 @@
   "name": "superapi",
   "version": "0.10.1",
   "description": "Super api wrapper around superagent",
-  "main": "dist/commonjs/superapi.js",
+  "main": "dist/commonjs/main.js",
   "scripts": {
     "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
   },
