@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.10.1
+  @version 0.10.2
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
