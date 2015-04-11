@@ -1,3 +1,22 @@
+<a name="0.10.2"></a>
+### 0.10.2 (2015-04-11)
+
+
+#### Bug Fixes
+
+* **package.json:** fix package.json main entrypoint ([548658c2](https://github.com/stephanebachelier/superapi/commit/548658c2af4337efdb6bafd2b846daebc3873026))
+
+
+
+<a name="0.10.1"></a>
+### 0.10.1 (2015-03-31)
+
+
+#### Features
+
+* **error:** reject promise on error ([f46dd9dd](https://github.com/stephanebachelier/superapi/commit/f46dd9dd1c74cd3b366f5598fa928d0add6d36aa))
+
+
 <a name="0.10.0"></a>
 ## 0.10.0 (2015-03-27)
 
