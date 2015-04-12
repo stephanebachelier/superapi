@@ -33,9 +33,74 @@ define(['superapi', 'superagent'], function (superapi, superagent) {
 });
 ```
 
+## Basic usage
+
+### Define services
+
+```
+var myApi = superapi.default({
+  baseUrl: "http://foo.domain.tld",
+  headers: {
+    // default headers
+  },
+  options: {
+    // superagent options
+    accept: 'json'
+  },   
+  services: {
+    createItem: {
+      path: '/users',
+      method: 'POST',
+      options: {
+        type: 'json'
+      }
+    },
+    getIem: {
+      path: 'items/:id'
+    }
+  }
+}
+```
+
+### Get request
+
+```
+var req = myApi.api.getItem({
+  params: {
+    id: 3
+  }
+});
+
+req.then(function(response) {}, function(error) {});
+```
+
+or
+
+```
+myApi.api.getItem({
+  params: {
+    id: 3
+  },
+  callback: function(error, response) {
+  }
+});
+```
+
+### Post request
+
+```
+myApi.api.createItem({
+  data: {
+    id: 3
+    title: 'hi there'
+  }
+})
+.then(function(response) {}, function(error) {});
+```
+
 ## Configuration
 
-Configuration is made by providing a JSON file in the format of:
+Configuration is made by providing a Javascript object:
 
 ```
 {
@@ -245,7 +310,7 @@ var req = api.api.foo({
 
 `Options`, which are __in fine__ HTTP headers are set before `headers`.
 
-## Usage
+## Development
 
 ### build library
 
