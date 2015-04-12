@@ -1,10 +1,10 @@
 /**
   @module superapi
-  @version 0.10.2
+  @version 0.10.3
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
-define("superapi/api",
+define("superapi/api", 
   ["exports"],
   function(__exports__) {
     "use strict";
@@ -49,8 +49,13 @@ define("superapi/api",
 
         req.on('error', resolver.reject);
 
-        req.end(callback ? callback : function(res) {
-          resolver[!res.error ? "resolve" : "reject"](res);
+        req.end(callback ? callback : function(err, res) {
+          if(err) {
+            resolver.reject(err);
+          }
+          else {
+            resolver.resolve(res);
+          }
         });
 
         if (timeout) {
@@ -272,7 +277,7 @@ define("superapi/api",
 
     __exports__["default"] = Api;
   });
-define("superapi",
+define("superapi", 
   ["./superapi/api","exports"],
   function(__dependency1__, __exports__) {
     "use strict";
