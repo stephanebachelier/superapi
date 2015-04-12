@@ -1,6 +1,6 @@
 # superapi
 
-## description
+## Description
 
 Superapi is a (super) wrapper around the excellent superagent library to help configuring any service call to an API or any  HTTP request.
 
@@ -8,7 +8,7 @@ The idea is to remove any setup while calling an API. Just provide a service id,
 
 Briefly `superapi` is a small library to never configure XHR calls in your code. Why ? Because :
 - it makes reading harder,
-- you will possibly introduce bugs are you will always write the same code to configure all XHR
+- you will possibly introduce bugs as you will duplicate code to configure all XHR
 - difficult to override for different environments
 - hardcoded url or paths in your code, which implies that for any changes in URL, paths or whatever, let's say send in url form encoded format instead of JSON, you will have to dig into your code base to make changes.
 
@@ -33,7 +33,7 @@ define(['superapi', 'superagent'], function (superapi, superagent) {
 });
 ```
 
-## configuration
+## Configuration
 
 Configuration is made by providing a JSON file in the format of:
 
@@ -49,7 +49,7 @@ Configuration is made by providing a JSON file in the format of:
 }
 ```
 
-### general options
+### General options
 
 Below are the supported options in the configuration.
 
@@ -78,7 +78,7 @@ Example:
 }
 ```
 
-### service configuration
+### Service configuration
 
 ```
 myservice: {
@@ -97,7 +97,7 @@ myservice: {
 
 ### with credentials
 
-If you want any cookie to be added back when making an XHR request, you must set the `withCredentials` option onthe XHR. Superapi configuration support the `withCredential` option by adding the special property `withCredentials: true` at the top level:
+If you want any cookie to be added back when making an XHR request, you must set the `withCredentials` option on the XHR. Superapi configuration support the `withCredential` option by adding the special property `withCredentials: true` at the top level:
 
 ```
 {
@@ -112,15 +112,15 @@ If you want any cookie to be added back when making an XHR request, you must set
 }
 ```
 
-The reason while this flag can be set on a service, is that I don't see any use case for this. Feel free to make a PR with a use case.
+The reason while this flag can't be set on a service, is that I don't see any use case for this. Feel free to make a PR with a use case.
 
 ### Setting headers at runtime.
 
-There may be some use cases where you need to set a header which is not know before running. One example could be some specific header that an API send you that you must return.
+There may be some use cases where you need to set a header at runtime after the global configuration step. One example could be some specific header that an API sent you and that you must send back with each request afterwards.
 
-An example for this is the CSRF token which in a Single Page Application (SPA) context, are sent by HTTP headers. The use case that I know well is about a login request that sent you back a CSRF token that you will have to send each time you make a request.
+An example for this is the CSRF token which in a Single Page Application (SPA) context, are sent by HTTP headers. The use case that I know well is about a login request that sent you back a CSRF token. That CSRF token must now be send as header each time a new request is made.
 
-The solution is to use the new `addHeader(name, value)` which will record some runtime headers that will be added on each request fired.
+One solution is to use the new `addHeader(name, value)` function which will record a runtime header that will be added on each request fired.
 
 An example to illustrate is better than words:
 
@@ -158,7 +158,9 @@ superapi.api.profile(/* */)
 
 ### Tokenized url
 
-You often need to parameterize API path where parameters will only be known at runtime. The solution is simple just use `:token`, eg:
+You often need to parameterize API path with values only known at runtime. In this case, you can write the service's path with placeholder with the following syntax `:token`. 
+
+Service definition:  
 
 ```
 // configuration
@@ -172,24 +174,29 @@ superapi.default({
 });
 ```
 
-You will need to pass a parameters object that will be replaced.
+Then when you call the api, You will need to pass a "parameters" object containing replacement values for the defined placeholders: 
 
 ```
-superapi.api.editMovie(data, {id: 12345});
+superapi.api.editMovie({
+    data: data,
+    params: {
+      id: 12345
+    }
+  });
 ```
 
 Voila! easy.
 
 ### Query string
 
-Superapi also support query arguments. You just need to pass and object to any of the following methods:
+Superapi also support query arguments. You just need to pass an object to any of the following methods:
 
 * `buildUrl(id, params, query)`
 * `request: function (id, data, params, query)`
 
-Query arguments are not added to configuration for now. I did not found any use cases, except for validation, so I choose to let it opened. So if you need to add query args, just provide an object as the `query` args and it will be used to create the query string.
+Query arguments are not added to configuration for now. I did not found any use cases, except for validation, so I choose to let it opened. If you need to add query args, just provide an object as the `query` args and it will be used to create the query string.
 
-As an example, if you want to request a route `http://example.tld/user/john.doe.json?content=post&since=19700101`, you can use the following configuration :
+As an example, if you want to construct a query for the route `http://example.tld/user/john.doe.json?content=post&since=19700101`, you can use the following configuration :
 
 ```
 var api = superapi.default({
@@ -218,6 +225,21 @@ var req = api.request('foo', undefined, {
 ```
 
 In the previous example second parameter is set to undefined as we are not using data field.
+
+Another way to write the same request with the defined "foo" service would be :
+```
+var req = api.api.foo({
+  params: {
+    foo: 'john',
+    bar: 'doe'
+  }, 
+  query: {
+    content: 'post',
+    since: '19700101'
+  }
+});
+```
+
 
 ### Configuration
 
