@@ -50,7 +50,6 @@ define("superapi/api",
        * - callback (function): callback to use, with a default which emits 'success' or 'error'
        *   event depending on res.ok value
        * - edit (function): callback to use, to tweak req if needed.
-       * - timeout (number): milli seconds before a timeout error is thrown
        */
       return function(options) {
         options = options || {};
@@ -59,7 +58,6 @@ define("superapi/api",
         var query = options.query || {};
         var callback = options.callback || null;
         var edit = options.edit || null;
-        var timeout = options.timeout || 20000;
 
         var self = this;
         var req = this.request(service, data, params, query);
@@ -88,17 +86,6 @@ define("superapi/api",
             resolver[!res.error ? "resolve" : "reject"](res);
           }
         });
-
-        if (timeout) {
-          req.xhr.timeout = timeout;
-          req.xhr.ontimeout = function () {
-            req.aborted = true;
-            var response = new self.agent.Response(req);
-            response.timeout = true;
-            response.error = true;
-            req.emit('abort', response);
-          }
-        }
 
         req.on('abort', function (res) {
           resolver.reject(res);

@@ -1,3 +1,27 @@
+<a name"0.10.5"></a>
+### 0.10.5 (2015-04-20)
+
+#### Bug Fixes
+
+* **timeout:** remove broken support for timeout ([13c676a6](https://github.com/stephanebachelier/superapi/commit/13c676a6541d3424d1ee956a785e963578d06d1b))
+
+
+<a name"0.10.4"></a>
+### 0.10.4 (2015-04-20)
+
+#### Bug Fixes
+
+* **callback:** reject promise if res.error ([ffbf7375](https://github.com/stephanebachelier/superapi/commit/ffbf7375da2ede58afac40e13ca171637f719f89))
+
+
+<a name="0.10.3"></a>
+### 0.10.3 (2015-04-12)
+
+#### Bug Fixes
+
+* **callback:** promises with superagent ([e6d00a5c](https://github.com/stephanebachelier/superapi/commit/e6d00a5c6216e5bbf63ff12fdf3df4919b72914b))
+
+
 <a name="0.10.2"></a>
 ### 0.10.2 (2015-04-11)
 
