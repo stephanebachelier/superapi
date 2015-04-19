@@ -45,7 +45,7 @@ var serviceHandler = function(service) {
         resolver.reject(err);
       }
       else {
-        resolver.resolve(res);
+        resolver[!res.error ? "resolve" : "reject"](res);
       }
     });
 

@@ -85,7 +85,7 @@ define("superapi/api",
             resolver.reject(err);
           }
           else {
-            resolver.resolve(res);
+            resolver[!res.error ? "resolve" : "reject"](res);
           }
         });
 
