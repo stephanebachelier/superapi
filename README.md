@@ -343,5 +343,6 @@ See [CHANGELOG.md](https://github.com/stephanebachelier/superapi/blob/master/CHA
 
  * [Adrien Delorme](https://github.com/azr)
  * [Tuomas Peippo](https://github.com/tume)
+ * [Jonathan Dray](https://github.com/spiroid)
 
 See [details](https://github.com/stephanebachelier/superapi/graphs/contributors)
