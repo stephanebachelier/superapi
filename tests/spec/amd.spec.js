@@ -581,6 +581,110 @@ define([
     });
   });
 
+  describe('promise', function  () {
+    var api;
+    var server;
+    var success;
+    var error;
+
+    beforeEach(function () {
+      api = superapi.default({
+        baseUrl: 'http://example.tld',
+        services: {
+          foo: {
+            path:'/foo'
+          }
+        }
+      });
+      api.agent = superagent;
+
+      // add sinon to fake the XHR call
+      server = sinon.fakeServer.create();
+      server.respondImmediately = true;
+
+      success = sinon.spy(function (res) {
+        console.log(res);
+      });
+      error = sinon.spy(function (res) {
+        console.log(res);
+      });
+    });
+
+    afterEach(function () {
+      server.restore();
+      server = null;
+      api = null;
+      success.reset();
+      success = null;
+      error.reset();
+      error = null;
+    });
+
+    it('should reject on any client (4xx) error', function (done) {
+      server.respondWith('GET', 'http://example.tld/foo',
+        [400, {}, '{}']
+      );
+
+      api.api.foo().then(success).catch(error).then(function () {
+        success.calledOnce.should.be.false;
+        error.calledOnce.should.be.true;
+        done();
+      });
+    });
+
+    it('should reject on any server (5xx) error', function (done) {
+      server.respondWith('GET', 'http://example.tld/foo',
+        [500, {}, '{}']
+      );
+
+      api.api.foo().then(success).catch(error).then(function () {
+        success.calledOnce.should.be.false;
+        error.calledOnce.should.be.true;
+        done();
+      });
+    });
+
+    it('should resolve on response with status 200', function (done) {
+      server.respondWith('GET', 'http://example.tld/foo',
+        [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+      );
+
+      api.api.foo().then(success).catch(error).then(function () {
+        success.calledOnce.should.be.true;
+        error.calledOnce.should.be.false;
+        done();
+      });
+    });
+
+    it('should reject promise on superagent error', function (done) {
+      server.respondImmediately = false;
+
+      var editFn = function (req) {
+        req.timeout = 200;
+      };
+
+      api.api.foo({edit: editFn}).then(success).catch(error).then(function () {
+        success.calledOnce.should.be.false;
+        error.calledOnce.should.be.true;
+        done();
+      });
+    });
+
+    it('should reject promise on superapi error', function (done) {
+      server.respondImmediately = false;
+
+      var editFn = function (req) {
+        throw new Error('foo');
+      };
+
+      var req = api.api.foo({edit: editFn}).then(success).catch(error).then(function () {
+        success.calledOnce.should.be.false;
+        error.calledOnce.should.be.true;
+        done();
+      });
+    });
+  });
+
   describe('uploading', function() {
 
     it.skip('can be done with a multipart/form-data request', function() {
