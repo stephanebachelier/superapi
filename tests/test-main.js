@@ -9,18 +9,18 @@ for (var file in window.__karma__.files) {
 }
 
 requirejs.config({
-  // Karma serves files from '/base'
-  baseUrl: '/base/dist',
+  // Karma serves files from "/base"
+  baseUrl: "/base/dist",
 
   shim: {},
 
   paths: {
-    superagent: '../bower_components/superagent/superagent',
-    superapi: 'amd/superapi.amd'
+    superagent: "../bower_components/superagent/superagent",
+    superapi: "amd/superapi.amd"
   },
 
   // ask Require.js to load these files (all our tests)
-  //deps: tests.concat(['jquery', 'underscore']),
+  //deps: tests.concat(["jquery", "underscore"]),
   deps: tests,
 
   // start test run, once Require.js is done

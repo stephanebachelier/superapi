@@ -50,37 +50,12 @@
     "<="
   ],
 
-  "requireSpaceBeforeBinaryOperators": [
-    "+",
-    "-",
-    "/",
-    "*",
-    "=",
-    "==",
-    "===",
-    "!=",
-    "!=="
-  ],
-
-  "requireSpaceAfterBinaryOperators": [
-    "+",
-    "-",
-    "/",
-    "*",
-    "=",
-    "==",
-    "===",
-    "!=",
-    "!=="
-  ],
-
-  "requireRightStickedOperators": [
-    "!"
-  ],
-
-  "requireLeftStickedOperators": [
-    ","
-  ],
+  "requireSpacesInConditionalExpression": {
+    "afterTest": true,
+    "beforeConsequent": true,
+    "afterConsequent": true,
+    "beforeAlternate": true
+  },
 
   "requireKeywordsOnNewLine": [
     "catch",
@@ -99,8 +74,7 @@
   "requireCapitalizedConstructors": true,
   "requireDotNotation": true,
 
-  "disallowLeftStickedOperators": [
-    "?",
+  "requireSpaceBeforeBinaryOperators": [
     "+",
     "-",
     "/",
@@ -125,12 +99,11 @@
     "!"
   ],
 
-  "disallowRightStickedOperators": [
-    "?",
+  "requireSpaceAfterBinaryOperators": [
     "+",
+    "-",
     "/",
     "*",
-    ":",
     "=",
     "==",
     "===",
@@ -172,6 +145,10 @@
   "safeContextKeyword": "self",
 
   "validateIndentation": 2,
+
+  "requireYodaConditions": true,
+
+  "requireSpaceAfterLineComment": true,
 
   "excludeFiles": ["node_modules/**", "app/bower_components/**" ]
 
