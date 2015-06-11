@@ -190,7 +190,7 @@ define([
       });
 
       it("should merge given data with data from configuration", function () {
-        var service = new api.Service("foo", null, {
+        var service = new api.Service("foo", {
           data: {
             key: "01234567890"
           }
@@ -201,6 +201,75 @@ define([
         });
         data.should.have.ownProperty("key", "01234567890");
         data.should.have.ownProperty("foo", "bar");
+      });
+    });
+
+    describe("request", function () {
+      it("should return an object with method, url and data", function () {
+        var service = new api.Service("foo", {
+          path: "foo"
+        });
+        var descriptor = service.request();
+
+        descriptor.should.have.ownProperty("method", "get");
+        descriptor.should.have.ownProperty("url", "/foo");
+        descriptor.should.have.ownProperty("data", {});
+      });
+
+      it("should return the same data property as calling data()", function () {
+        var service = new api.Service("foo", {
+          path: "foo"
+        });
+
+        var data = {
+          foo: "bar"
+        };
+
+        var serviceData = service.data(data);
+        serviceData.should.eql({
+          foo: "bar"
+        });
+
+        var descriptor = service.request(data);
+
+        descriptor.should.have.ownProperty("data", serviceData);
+      });
+
+      it("should return the same method property as calling method()", function () {
+        var service = new api.Service("foo", {
+          path: "foo",
+          method: "post"
+        });
+
+        var method = service.method();
+        method.should.eql("post");
+
+        var descriptor = service.request();
+
+        descriptor.should.have.ownProperty("method", method);
+      });
+
+      it("should return the same url property as calling url()", function () {
+        var service = new api.Service("foo", {
+          path: "foo/:arg1/:arg2",
+          method: "post"
+        });
+
+        var params = {
+          arg1: 10,
+          arg2: 20
+        };
+
+        var query = {
+          foo: "bar"
+        };
+
+        var url = service.url(params, query);
+        url.should.eql("/foo/10/20?foo=bar");
+
+        var descriptor = service.request(null, params, query);
+
+        descriptor.should.have.ownProperty("url", url);
       });
     });
   });
