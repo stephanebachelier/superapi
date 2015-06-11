@@ -4,7 +4,7 @@ define([
 ], function (superapi, superagent) {
   "use strict";
 
-  describe("request", function () {
+  describe.skip("request", function () {
     var api;
     var server;
 
@@ -86,7 +86,7 @@ define([
     });
   });
 
-  describe("send request", function () {
+  describe.skip("send request", function () {
     var api;
 
     beforeEach(function () {
@@ -111,7 +111,7 @@ define([
     });
   });
 
-  describe("uploading", function () {
+  describe.skip("uploading", function () {
 
     it.skip("can be done with a multipart/form-data request", function () {
       var api = superapi.default({
