@@ -1,185 +1,207 @@
 define([
-  "superapi",
-  "superagent"
-], function (superapi, superagent) {
+  "superapi"
+], function (superapi) {
   "use strict";
 
-  describe("request url", function () {
-    it("should append the service url to the baseUrl", function () {
-      var api = superapi.default({
-        baseUrl: "http://foo.domain.tld/api",
-        services: {
-          foo: {
-            path: "/foo"
-          }
-        }
+  var api = superapi.default;
+
+  describe("service", function () {
+    describe("configuration", function () {
+      it("should have default properties form constructor", function () {
+        var service = new api.Service("foo", "http://domain.tld/api", {
+          path: "bar"
+        });
+
+        service.should.have.ownProperty("id", "foo");
+        service.should.have.ownProperty("baseUrl", "http://domain.tld/api");
+        service.should.have.ownProperty("config");
+        service.config.should.eql({
+          path: "bar"
+        });
       });
 
-      api.url("foo").should.eql("http://foo.domain.tld/api/foo");
-    });
+      it("should have default empty baseUrl and config", function () {
+        var service = new api.Service("foo");
 
-    it("should add a slash in front of route path if missing", function () {
-      var api = superapi.default({
-        baseUrl: "http://foo.domain.tld/api",
-        services: {
-          foo: {
-            path: "foo"
-          }
-        }
+        service.should.have.ownProperty("baseUrl", "");
+        service.should.have.ownProperty("config");
+        // jshint -W030
+        service.config.should.be.empty;
+        // jshint +W030
       });
 
-      api.url("foo").should.eql("http://foo.domain.tld/api/foo");
+      it("should support id + config constructor form", function () {
+        var service = new api.Service("foo", {
+          path: "bar"
+        });
+
+        service.should.have.ownProperty("id", "foo");
+        service.should.have.ownProperty("baseUrl", "");
+        service.should.have.ownProperty("config");
+        service.config.should.eql({
+          path: "bar"
+        });
+      });
     });
 
-    it("should support route as a string", function () {
-      var api = superapi.default({
-        baseUrl: "http://foo.domain.tld/api",
-        services: {
+    describe("url", function () {
+      it("should build the service url", function () {
+        var service = new api.Service("foo", "http://domain.tld/api", {
+          path: "bar"
+        });
+
+        service.url().should.eql("http://domain.tld/api/bar");
+      });
+
+      it("should support relative url specifying null baseUrl", function () {
+        var service = new api.Service("foo", null, {
+          path: "bar"
+        });
+
+        service.url().should.eql("/bar");
+      });
+
+      it("should support relative url using default baseUrl", function () {
+        var service = new api.Service("foo", {
+          path: "bar"
+        });
+
+        service.url().should.eql("/bar");
+      });
+
+      it("should build the service url with params", function () {
+        var service = new api.Service("foo", "http://domain.tld/api", {
+          path: "bar/:arg1/:arg2"
+        });
+        var url = service.url({
+          arg1: "john",
+          arg2: "doe"
+        });
+
+        url.should.eql("http://domain.tld/api/bar/john/doe");
+      });
+
+      it("should build the service url with query only", function () {
+        var service = new api.Service("foo", "http://domain.tld/api", {
+          path: "bar"
+        });
+        var url = service.url(null, {
           foo: "bar"
-        }
+        });
+
+        url.should.eql("http://domain.tld/api/bar?foo=bar");
       });
 
-      api.url("foo").should.eql("http://foo.domain.tld/api/bar");
-    });
-
-    it("should throw error if path is missing", function () {
-      var api = superapi.default({
-        baseUrl: "http://foo.domain.tld/api",
-        services: {
-          foo: {}
-        }
-      });
-
-      // fail in PhantomJS as bind not available
-      api.url.bind(null, "foo").should.throw();
-    });
-  });
-
-  describe("request method", function () {
-    it("should default to get", function () {
-      var api = superapi.default({
-        baseUrl: "http://foo.domain.tld/api",
-        services: {
+      it("should build the service url with params and query", function () {
+        var service = new api.Service("foo", "http://domain.tld/api", {
+          path: "bar/:arg1/:arg2"
+        });
+        var url = service.url({
+          arg1: "john",
+          arg2: "doe"
+        }, {
           foo: "bar"
-        }
+        });
+
+        url.should.eql("http://domain.tld/api/bar/john/doe?foo=bar");
       });
-      api.agent = superagent;
-      api.request("foo").method.should.eql("GET");
+
     });
 
-    it("should support POST", function () {
-      var api = superapi.default({
-        baseUrl: "http://foo.domain.tld/api",
-        services: {
-          foo: {
-            path: "bar",
-            method: "POST"
-          }
-        }
+    describe("method", function () {
+      it("should return get by default", function () {
+        var service = new api.Service("foo", null, {
+          path: "bar/:arg1/:arg2"
+        });
+
+        service.method().should.eql("get");
       });
-      api.agent = superagent;
-      api.request("foo").method.should.eql("POST");
+
+      it("should return get for an empty method", function () {
+        var service = new api.Service("foo", null, {
+          path: "bar/:arg1/:arg2",
+          method: ""
+        });
+
+        service.method().should.eql("get");
+      });
+
+      it("should return method in lowercase", function () {
+        var service = new api.Service("foo", null, {
+          path: "bar/:arg1/:arg2",
+          method: "POST"
+        });
+
+        service.method().should.eql("post");
+      });
     });
 
-    it("should support PUT", function () {
-      var api = superapi.default({
-        baseUrl: "http://foo.domain.tld/api",
-        services: {
-          foo: {
-            path: "bar",
-            method: "PUT"
-          }
-        }
+    describe("options", function () {
+      it("should set default empty options and headers if none defined", function () {
+        var service = new api.Service("foo");
+
+        var options = service.options();
+
+        options.should.have.ownProperty("options");
+        options.should.have.ownProperty("headers");
+
+        // jshint -W030
+        options.options.should.be.empty;
+        options.headers.should.be.empty;
+        // jshint +W030
       });
-      api.agent = superagent;
-      api.request("foo").method.should.eql("PUT");
+
+      it("should return any headers or options configured for a service", function () {
+        var service = new api.Service("foo", {
+          path: "bar/:arg1/:arg2",
+          method: "POST",
+          headers: {
+            "X-Wings": 1
+          },
+          options: {
+            type: "json"
+          }
+        });
+
+        var options = service.options();
+
+        options.should.have.ownProperty("options");
+        options.should.have.ownProperty("headers");
+
+        options.headers.should.have.ownProperty("X-Wings", 1);
+        options.options.should.have.ownProperty("type", "json");
+      });
     });
 
-    it("should support DELETE", function () {
-      var api = superapi.default({
-        baseUrl: "http://foo.domain.tld/api",
-        services: {
-          foo: {
-            path: "bar",
-            method: "DELETE"
-          }
-        }
+    describe("data", function () {
+      it("should return empty data object if no data arg given", function () {
+        var service = new api.Service("foo");
+        // jshint -W030
+        service.data().should.be.empty;
+        // jshint +W030
       });
-      api.agent = superagent;
-      api.request("foo").method.should.eql("DELETE");
-    });
 
-    it("should support HEAD", function () {
-      var api = superapi.default({
-        baseUrl: "http://foo.domain.tld/api",
-        services: {
-          foo: {
-            path: "bar",
-            method: "HEAD"
-          }
-        }
+      it("should return data object if no data defined in config", function () {
+        var service = new api.Service("foo");
+        var data = service.data({
+          foo: "bar"
+        });
+        data.should.have.ownProperty("foo", "bar");
       });
-      api.agent = superagent;
-      api.request("foo").method.should.eql("HEAD");
-    });
 
-    it("should support PATCH", function () {
-      var api = superapi.default({
-        baseUrl: "http://foo.domain.tld/api",
-        services: {
-          foo: {
-            path: "bar",
-            method: "PATCH"
+      it("should merge given data with data from configuration", function () {
+        var service = new api.Service("foo", null, {
+          data: {
+            key: "01234567890"
           }
-        }
+        });
+
+        var data = service.data({
+          foo: "bar"
+        });
+        data.should.have.ownProperty("key", "01234567890");
+        data.should.have.ownProperty("foo", "bar");
       });
-      api.agent = superagent;
-      api.request("foo").method.should.eql("PATCH");
-    });
-  });
-
-  describe.skip("request headers", function () {
-  });
-
-  describe("service request headers", function () {
-    it("should add service headers", function () {
-      var api = superapi.default({
-        baseUrl: "http://foo.domain.tld/api",
-        services: {
-          foo: {
-            path: "bar",
-            headers: {
-              "Content-type": "json"
-            }
-          }
-        }
-      });
-      api.agent = superagent;
-      api.request("foo")._header.should.haveOwnProperty("content-type");
-      api.request("foo")._header["content-type"].should.eql("json");
-    });
-  });
-
-  describe("service request options", function () {
-    it("should add headers options", function () {
-      var api = superapi.default({
-        baseUrl: "http://foo.domain.tld/api",
-        services: {
-          foo: {
-            path: "bar",
-            options: {
-              type: "json",
-              accept: "png"
-            }
-          }
-        }
-      });
-      api.agent = superagent;
-      api.request("foo")._header.should.haveOwnProperty("content-type");
-      api.request("foo")._header["content-type"].should.eql("application/json");
-
-      api.request("foo")._header.should.haveOwnProperty("accept");
-      api.request("foo")._header.accept.should.eql("png");
     });
   });
 });
