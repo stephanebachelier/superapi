@@ -123,5 +123,113 @@ define([
         // jshint +W030
       });
     });
+
+    describe("serviceHandler", function () {
+      var api = superapi.default();
+
+      // helper to call serviceHandler with the right (configuration) context
+      var callServiceHelper = function (options) {
+        var handler = api.serviceHandler("foo");
+        var configuration = api.configurations.bar;
+
+        // need to bind handler to configuration context
+        return handler.call(configuration, options);
+      };
+
+      before(function () {
+        api.configure("bar", {
+          baseUrl: "http://foo.domain.tld/api",
+          services: {
+            foo: "foo/:arg1/:arg2"
+          }
+        });
+      });
+
+      after(function () {
+        api = null;
+      });
+
+      it("should return a curried function", function () {
+        var handler = api.serviceHandler("foo");
+
+        // jshint -W030
+        handler.should.not.be.null;
+        handler.should.be.a.function;
+        // jshint +W030
+      });
+
+      describe("curried function without agent", function () {
+        it("should failed", function () {
+          callServiceHelper().catch(function (error) {
+            error.should.eql("missing agent");
+          });
+        });
+      });
+
+      describe("curried function with agent", function () {
+        var mock;
+
+        before(function () {
+          // mock agentWrapper call
+          api.agentWrapper = {
+            serviceHandler: function () {}
+          };
+
+          // setup mock here to ease test maintenance
+          mock = sinon.mock(api.agentWrapper);
+        });
+
+        after(function () {
+          delete api.agentWrapper;
+          mock.restore();
+        });
+
+        it("should retrieve service request description", function () {
+          var spy = sinon.spy(api.configurations.bar, "request");
+
+          var params = {
+            arg1: 10,
+            arg2: 20
+          };
+
+          var query = {
+            foo: "bar"
+          };
+
+          callServiceHelper({
+            data: "my-awesome-data",
+            params: params,
+            query: query
+          });
+
+          spy.callCount.should.be.eql(1);
+
+          var args = spy.args[0];
+          args[0].should.be.eql("foo");
+          args[1].should.be.eql("my-awesome-data");
+          args[2].should.be.eql(params);
+          args[3].should.be.eql(query);
+
+          spy.restore();
+        });
+
+        it("should return a promise", function () {
+          var promise = callServiceHelper();
+
+          // jshint -W030
+          promise.then.should.be.a.function;
+          promise.catch.should.be.a.function;
+          // jshint +W030
+        });
+
+        it("should call agent handler", function () {
+          mock.expects("serviceHandler").once();
+
+          callServiceHelper();
+
+          mock.verify();
+        });
+      });
+    });
   });
 });
