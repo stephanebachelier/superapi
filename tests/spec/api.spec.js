@@ -231,5 +231,24 @@ define([
         });
       });
     });
+
+    describe("agent", function () {
+      // test withSuperagent
+      describe("with superagent", function () {
+        var api = superapi.default();
+
+        // jshint -W030
+        expect(api.agentWrapper).to.be.undefined;
+        // jshint +W030
+
+        var ret = api.withSuperagent();
+
+        // check that chaining is possible
+        ret.should.eql(api);
+
+        // check that agent wrapper is superagent wrapper
+        api.agentWrapper.should.be.instanceof(superapi.default.agentWrapper.superagent);
+      });
+    });
   });
 });
