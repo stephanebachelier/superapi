@@ -1,6 +1,6 @@
 define([
   "superapi"
-], function (superapi) {
+], function (superapi) { // jshint ignore:line
   "use strict";
 
   describe.skip("agent", function () {

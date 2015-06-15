@@ -4,8 +4,6 @@ define([
 ], function (superapi, superagent) {
   "use strict";
 
-  var urlize = superapi.default.urlize;
-
   describe.skip("url tokenization", function () {
     // it("replaceUrl - should replace tokens in a given url", function () {
     //   var url = urlize.replaceUrl("/:bar/:foo.:baz.json", {
