@@ -250,5 +250,95 @@ define([
         api.agentWrapper.should.be.instanceof(superapi.default.agentWrapper.superagent);
       });
     });
+
+    describe("request", function () {
+      it("should failed if no agent defined", function () {
+        var api = superapi.default();
+
+        should.Throw(function () {
+          api.request();
+        }, "missing agent");
+      });
+
+      it("should delegate call to agent request method", function () {
+        var api = superapi.default();
+        api.withSuperagent();
+
+        var mock = sinon.mock(api.agentWrapper);
+        mock.expects("request")
+          .once()
+          .withExactArgs("get", "foo", "data", {});
+
+        var args = ["get", "foo", "data", {}];
+        api.request.apply(api, args);
+
+        mock.verify();
+      });
+    });
+
+    describe("HTTP verb sugar methods", function () {
+      var api;
+      var stub;
+
+      before(function () {
+        api = superapi.default();
+        stub = sinon.stub(api, "request");
+      });
+
+      after(function () {
+        stub.restore();
+        stub = null;
+        api = null;
+      });
+
+      afterEach(function () {
+        stub.reset();
+      });
+
+      // above tests only testing that HTTP method is set and
+      // that request method is called.
+      it("should set HTTP GET method", function () {
+        api.get("foo", "bar", "baz");
+
+        stub.callCount.should.eql(1);
+        stub.args[0][0].should.eql("get");
+      });
+
+      it("should set HTTP POST method", function () {
+        api.post("foo", "bar", "baz");
+
+        stub.callCount.should.eql(1);
+        stub.args[0][0].should.eql("post");
+      });
+
+      it("should set HTTP PUT method", function () {
+        api.put("foo", "bar", "baz");
+
+        stub.callCount.should.eql(1);
+        stub.args[0][0].should.eql("put");
+      });
+
+      it("should set HTTP DELETE method", function () {
+        api.del("foo", "bar", "baz");
+
+        stub.callCount.should.eql(1);
+        stub.args[0][0].should.eql("del");
+      });
+
+      it("should set HTTP PATCH method", function () {
+        api.patch("foo", "bar", "baz");
+
+        stub.callCount.should.eql(1);
+        stub.args[0][0].should.eql("patch");
+      });
+
+      it("should set HTTP HEAD method", function () {
+        api.head("foo", "bar", "baz");
+
+        stub.callCount.should.eql(1);
+        stub.args[0][0].should.eql("head");
+      });
+
+    });
   });
 });
