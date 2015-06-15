@@ -161,7 +161,7 @@ define([
       describe("curried function without agent", function () {
         it("should failed", function () {
           callServiceHelper().catch(function (error) {
-            error.should.eql("missing agent");
+            error.message.should.eql("missing agent");
           });
         });
       });
