@@ -7,6 +7,18 @@ function (superapi, superagent) {
 
   var Superagent = superapi.default.agentWrapper.superagent;
 
+  describe("superagent wrapper", function () {
+    it("should throw if no agent defined", function () {
+      var agent;
+      should.Throw(function () {
+        agent = new Superagent();
+      }, "missing agent");
+    });
+
+    describe("request", function () {
+
+    });
+
     describe("_setHeaders", function () {
       it("should not throw on null headers on request", function () {
         var agent = new Superagent(superagent);
