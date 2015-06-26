@@ -206,5 +206,301 @@ function (superapi, superagent) {
       });
     });
 
+    describe("serviceHandler", function () {
+      var agent;
+      var server;
+      var serviceDesc;
+
+      beforeEach(function () {
+        agent = new Superagent(superagent);
+
+        serviceDesc = {
+          method: "get",
+          url: "http://domain.tld/foo"
+        };
+
+        // add sinon to fake the XHR call
+        server = sinon.fakeServer.create();
+      });
+
+      afterEach(function () {
+        server.restore();
+        server = null;
+        agent = null;
+        serviceDesc = null;
+      });
+
+      describe("callback option", function () {
+        it("should use provided callback on request end", function (done) {
+          server.respondWith("GET", "http://domain.tld/foo", [200, {}, "ok"]);
+          var spy = sinon.spy(function (res) {
+            // at least we are sure that this function has been called
+            // spy.args[0] is res
+            // test that res is not an error
+            res.should.have.ownProperty("req");
+            res.status.should.eql(200);
+            done();
+          });
+          agent.serviceHandler(serviceDesc, {
+            callback: spy
+          });
+
+          server.respond();
+        });
+
+        it("should use provided callback on request error", function (done) {
+          server.respondWith("GET", "http://domain.tld/foo", [400, {}, "ko"]);
+
+          var callback = sinon.spy(function (res) {
+            // at least we are sure that this function has been called
+            // spy.args[0] is res
+            // test that res is not an error
+            res.should.have.ownProperty("error");
+            res.error.should.be.an.instanceof(Error);
+            res.status.should.eql(400);
+            done();
+          });
+
+          agent.serviceHandler(serviceDesc, {
+            callback: callback
+          });
+
+          server.respond();
+        });
+
+        it("should use provided callback on abort", function (done) {
+          var callback = sinon.spy(function (err) {
+            err.should.be.an.instanceof(Error);
+            done();
+          });
+
+          var req = agent.serviceHandler(serviceDesc, {
+            callback: callback
+          });
+
+          req.abort();
+        });
+
+        describe("if not null", function () {
+          it("should prevent resolve handler to be called on request success", function (done) {
+            server.respondWith("GET", "http://domain.tld/foo", [200, {}, "ok"]);
+
+            var resolveSpy = sinon.spy(function () {});
+
+            var spy = sinon.spy(function (res) {
+              // at least we are sure that this function has been called
+              // spy.args[0] is res
+              // test that res is not an error and resolveSpy not called
+              res.should.have.ownProperty("req");
+              res.status.should.eql(200);
+
+              resolveSpy.callCount.should.eql(0);
+              done();
+            });
+
+            agent.serviceHandler(serviceDesc, {
+              callback: spy,
+              resolve: resolveSpy
+            });
+
+            server.respond();
+          });
+
+          it("should prevent reject handler to be called on request error", function (done) {
+            server.respondWith("GET", "http://domain.tld/foo", [400, {}, "ko"]);
+
+            var rejectSpy = sinon.spy(function () {});
+
+            var spy = sinon.spy(function (res) {
+              // at least we are sure that this function has been called
+              // spy.args[0] is res
+              // test that res is an error and that reject has been called
+              res.should.have.ownProperty("error");
+              res.status.should.eql(400);
+
+              rejectSpy.callCount.should.eql(0);
+              done();
+            });
+
+            agent.serviceHandler(serviceDesc, {
+              callback: spy,
+              reject: rejectSpy
+            });
+
+            server.respond();
+          });
+        });
+      });
+
+      describe("edit function option", function () {
+        it("should define a null callback by default", function (done) {
+          server.respondWith("GET", "http://domain.tld/foo", [200, {}, "ok"]);
+
+          var editSpy = sinon.spy(function () {});
+
+          var spy = sinon.spy(function () {
+            editSpy.callCount.should.eql(1);
+            var editArgs = editSpy.args[0];
+            editArgs.should.have.lengthOf(1);
+            editArgs[0].should.eql(req);
+
+            done();
+          });
+
+          var req = agent.serviceHandler(serviceDesc, {
+            callback: spy,
+            edit: editSpy
+          });
+
+          server.respond();
+        });
+
+        it("should not throw if not a function", function (done) {
+          server.respondWith("GET", "http://domain.tld/foo", [200, {}, "ok"]);
+
+          should.not.Throw(function () {
+            agent.serviceHandler(serviceDesc, {
+              callback: function () {
+                done();
+              },
+              edit: "this.should.be.a.function"
+            });
+          });
+
+          server.respond();
+        });
+
+        it("should be called if provided", function (done) {
+          server.respondWith("GET", "http://domain.tld/foo", [200, {}, "ok"]);
+
+          var editSpy = sinon.spy(function () {});
+
+          var spy = sinon.spy(function () {
+            editSpy.callCount.should.eql(1);
+            done();
+          });
+
+          agent.serviceHandler(serviceDesc, {
+            callback: spy,
+            edit: editSpy
+          });
+
+          server.respond();
+        });
+
+        it("should call it prior to launching request", function (done) {
+          server.respondWith("GET", "http://domain.tld/foo", [200, {}, "ok"]);
+
+          var editSpy = sinon.spy(function () {});
+
+          var spy = sinon.spy(function () {
+            editSpy.callCount.should.eql(1);
+            done();
+          });
+
+          agent.serviceHandler(serviceDesc, {
+            callback: spy,
+            edit: editSpy
+          });
+
+          server.respond();
+        });
+      });
+
+      it("should call resolve on response success", function (done) {
+        server.respondWith("GET", "http://domain.tld/foo", [200, {}, "ok"]);
+
+        var spy = sinon.spy(function (res) {
+          res.should.have.ownProperty("req");
+          res.status.should.eql(200);
+
+          done();
+        });
+
+        agent.serviceHandler(serviceDesc, {
+          resolve: spy,
+        });
+
+        server.respond();
+      });
+
+      it("should call reject on response error", function (done) {
+        server.respondWith("GET", "http://domain.tld/foo", [404, {}, "ko"]);
+
+        var spy = sinon.spy(function (res) {
+          res.should.have.ownProperty("req");
+          res.status.should.eql(404);
+
+          done();
+        });
+
+        agent.serviceHandler(serviceDesc, {
+          reject: spy,
+        });
+
+        server.respond();
+      });
+
+      it("should not call resolve on response error", function (done) {
+        server.respondWith("GET", "http://domain.tld/foo", [404, {}, "ko"]);
+
+        var resolveSpy = sinon.spy(function () {});
+
+        var rejectSpy = sinon.spy(function (res) {
+          res.status.should.eql(404);
+          // jshint -W030
+          resolveSpy.called.should.be.false;
+          // jshint +W030
+          done();
+        });
+
+        agent.serviceHandler(serviceDesc, {
+          resolve: resolveSpy,
+          reject: rejectSpy,
+        });
+
+        server.respond();
+      });
+
+      it("should not call reject on response success", function (done) {
+        server.respondWith("GET", "http://domain.tld/foo", [200, {}, "ok"]);
+
+        var resolveSpy = sinon.spy(function (res) {
+          res.status.should.eql(200);
+          // jshint -W030
+          rejectSpy.called.should.be.false;
+          // jshint +W030
+          done();
+        });
+
+        var rejectSpy = sinon.spy(function () {});
+
+        agent.serviceHandler(serviceDesc, {
+          resolve: resolveSpy,
+          reject: rejectSpy,
+        });
+
+        server.respond();
+      });
+
+      it("should call reject but not resolve on request abort", function (done) {
+        var resolveSpy = sinon.spy(function () {});
+
+        var rejectSpy = sinon.spy(function (err) {
+          err.should.be.instanceof(Error);
+          // jshint -W030
+          resolveSpy.called.should.be.false;
+          // jshint +W030
+          done();
+        });
+
+        var req = agent.serviceHandler(serviceDesc, {
+          resolve: resolveSpy,
+          reject: rejectSpy,
+        });
+
+        req.abort();
+      });
+    });
   });
 });
