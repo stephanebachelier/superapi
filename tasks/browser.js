@@ -5,7 +5,7 @@ module.exports = function(grunt) {
 
       output.push.apply(output, f.src.map(grunt.file.read));
 
-      output.push('window.<%= package.name %> = requireModule("<%= package.name %>");');
+      output.push('window.<%= package.name %> = require("<%= package.name %>");');
       output.push('})(window);');
 
       grunt.file.write(f.dest, grunt.template.process(output.join("\n")));
