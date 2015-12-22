@@ -334,6 +334,15 @@ $ grunt dev
 
 This task will start karma test runner and watch repository for code change.
 
+### Browser testing
+
+To test the build browser you will need to start first the simple express API running
+
+```
+node tests/api.js
+```
+
+And then open the `tests/browser/index.html` file in your browser and watch the console.
 
 ## CHANGELOG
 
