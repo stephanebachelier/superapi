@@ -1,0 +1,83 @@
+<doctype html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <title>Superapi browser test</title>
+    <link rel="stylesheet" href="../../node_modules/mocha/mocha.css" type="text/css">
+    <script src="../../node_modules/mocha/mocha.js"></script>
+    <script src="../../node_modules/chai/chai.js"></script>
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <div id="messages"></div>
+
+    <script src="../../dist/superapi.js"></script>
+    <script src="../../bower_components/superagent/superagent.js"></script>
+    <script>
+      var api = superapi.default({
+        baseUrl: 'http://localhost:4000',
+        services: {
+          ping: {
+            path: 'ping'
+          },
+          foo: {
+            path: 'foo/:plop',
+            method: 'POST'
+          }
+        }
+      });
+      api.agent = superagent;
+
+      chai.should();
+      mocha.setup('bdd');
+
+      describe('superapi browser simple test suite', function () {
+
+        it('should be able to call a get resource', function (done) {
+          api.api.ping()
+            .then(function (res) {
+              res.text.should.eq('pong');
+              done();
+            })
+            .catch(function () {
+              done();
+            });
+
+        });
+
+        it('should be able to call a post resource with a parameterized URL', function (done) {
+          api.api.foo({
+            params: {
+              plop: 'bar'
+            }
+          }).then(function (res) {
+              res.text.should.eq('bar');
+              done();
+            })
+            .catch(function () {
+              done();
+            });
+
+        });
+
+        it('should be able to call a post resource with a parameterized URL', function (done) {
+          api.api.foo({
+            params: {
+              plop: 'baz'
+            }
+          }).then(function (res) {
+              res.text.should.eq('baz');
+              done();
+            })
+            .catch(function () {
+              done();
+            });
+
+        });
+      });
+
+      mocha.run();
+
+    </script>
+  </body>
+</html>
