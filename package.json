@@ -58,6 +58,8 @@
     "load-grunt-config": "^0.7.2",
     "load-grunt-tasks": "~0.2.0",
     "mocha": "^1.18.0",
+    "phantomjs-polyfill": "0.0.1",
+    "promise-polyfill": "^2.1.0",
     "release-it": "0.0.10",
     "requirejs": "^2.1.11",
     "sinon": "^1.9.1",
