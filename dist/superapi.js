@@ -1,5 +1,5 @@
 (function(globals) {
-var define, requireModule;
+var define, require;
 
 (function() {
   var registry = {}, seen = {};
@@ -8,7 +8,10 @@ var define, requireModule;
     registry[name] = { deps: deps, callback: callback };
   };
 
-  requireModule = function(name) {
+  var pattern = /^\.\//;
+  require  = function(name) {
+    name = pattern.test(name) ? name.replace(pattern, '') : name;
+
     if (seen[name]) { return seen[name]; }
     seen[name] = {};
 
@@ -26,7 +29,7 @@ var define, requireModule;
       if (deps[i] === 'exports') {
         reified.push(exports = {});
       } else {
-        reified.push(requireModule(deps[i]));
+        reified.push(require(deps[i]));
       }
     }
 
@@ -310,5 +313,5 @@ define("superapi",
     // export API
     __exports__["default"] = superapi;
   });
-window.superapi = requireModule("superapi");
+window.superapi = require("superapi");
 })(window);
