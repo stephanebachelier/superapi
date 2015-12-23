@@ -22,7 +22,9 @@
     "url": "https://github.com/stephanebachelier/superapi/issues"
   },
   "homepage": "https://github.com/stephanebachelier/superapi",
-  "dependencies": {},
+  "dependencies": {
+    "superagent": "^1.6.1"
+  },
   "devDependencies": {
     "chai": "^1.9.1",
     "express": "^4.13.3",
