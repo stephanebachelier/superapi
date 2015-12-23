@@ -6,6 +6,9 @@ module.exports = {
     jshintrc: '.jshintrc',
     reporter: require('jshint-stylish')
   },
+  lib: {
+    src: ['lib/**/*.js']
+  },
   grunt: {
     src: ['Gruntfile.js', 'tasks/options/{,/*}*.js']
   },
