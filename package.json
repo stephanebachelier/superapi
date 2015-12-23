@@ -4,7 +4,9 @@
   "description": "Super api wrapper around superagent",
   "main": "dist/commonjs/main.js",
   "scripts": {
-    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
+    "test": "npm run amd-test && npm run cjs-test",
+    "amd-test": "./node_modules/.bin/karma start --single-run",
+    "cjs-test": "./node_modules/.bin/mocha --opts tests/commonjs/mocha.opts tests/commonjs/specs/*.js"
   },
   "repository": {
     "type": "git",

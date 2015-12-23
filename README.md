@@ -223,7 +223,7 @@ superapi.api.profile(/* */)
 
 ### Tokenized url
 
-You often need to parameterize API path with values only known at runtime. In this case, you can write the service's path with placeholder with the following syntax `:token`. 
+You often need to parameterize API path with values only known at runtime. In this case, you can write the service's path with placeholder with the following syntax `:token`.
 
 Service definition:  
 
@@ -239,7 +239,7 @@ superapi.default({
 });
 ```
 
-Then when you call the api, You will need to pass a "parameters" object containing replacement values for the defined placeholders: 
+Then when you call the api, You will need to pass a "parameters" object containing replacement values for the defined placeholders:
 
 ```
 superapi.api.editMovie({
@@ -297,7 +297,7 @@ var req = api.api.foo({
   params: {
     foo: 'john',
     bar: 'doe'
-  }, 
+  },
   query: {
     content: 'post',
     since: '19700101'
@@ -322,7 +322,15 @@ This task build the distribution for browser, AMD or CommonJS:
  * AMD: dist/amd/superapi.amd.js
  * CommonJS: dist/commonjs/main.js
 
-### test
+## Tests
+
+Just to note that you should not test in PhantomJS as the code use the `bind` function unless you provide
+a polyfill.
+
+You will also need to provide a polyfill for Promise if your environment does not provide a native implementation
+like `bluebird`, this one being recommended as being really fast. Just simply require `bluebird`.
+
+### AMD
 
 Tests are written using `mocha` and run with `karma` test runner.
 
@@ -343,6 +351,21 @@ node tests/api.js
 ```
 
 And then open the `tests/browser/index.html` file in your browser and watch the console.
+
+
+### Node testing
+
+You should test the commonjs specs which will just run a few tests, the same as browser testing.
+
+First start the small express API
+```
+node tests/api.js
+```
+
+And then launch the small test suite:
+```
+./node_modules/.bin/mocha --opts tests/commonjs/mocha.opts tests/commonjs/specs/*.js
+```
 
 ## CHANGELOG
 
