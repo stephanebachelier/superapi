@@ -14,24 +14,28 @@
     <script src="../../dist/superapi.js"></script>
     <script src="../../bower_components/superagent/superagent.js"></script>
     <script>
-      var api = superapi.default({
-        baseUrl: 'http://localhost:4000',
-        services: {
-          ping: {
-            path: 'ping'
-          },
-          foo: {
-            path: 'foo/:plop',
-            method: 'POST'
-          }
-        }
-      });
-      api.agent = superagent;
 
       chai.should();
       mocha.setup('bdd');
 
       describe('superapi browser simple test suite', function () {
+        var api;
+        
+        before(function () {
+          api = superapi.default({
+            baseUrl: 'http://localhost:4000',
+            services: {
+              ping: {
+                path: 'ping'
+              },
+              foo: {
+                path: 'foo/:plop',
+                method: 'POST'
+              }
+            }
+          });
+          api.agent = superagent;
+        });
 
         it('should be able to call a get resource', function (done) {
           api.api.ping()
