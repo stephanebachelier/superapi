@@ -1,3 +1,35 @@
+<a name="0.11.0"></a>
+# [0.11.0](https://github.com/stephanebachelier/superapi/compare/0.10.6...v0.11.0) (2015-12-24)
+
+
+### Bug Fixes
+
+* **self:** remove usage ([291ef93](https://github.com/stephanebachelier/superapi/commit/291ef93))
+* **test:** add polyfill for phantomjs ([a7ef2b8](https://github.com/stephanebachelier/superapi/commit/a7ef2b8)), closes [#8](https://github.com/stephanebachelier/superapi/issues/8)
+
+### Features
+
+* **middleware:** add middleware concept ([5202605](https://github.com/stephanebachelier/superapi/commit/5202605))
+* **service-handler:** refactor error handling ([75617f8](https://github.com/stephanebachelier/superapi/commit/75617f8))
+
+
+
+<a name="0.10.6"></a>
+## [0.10.6](https://github.com/stephanebachelier/superapi/commit/e5a0e02) (2015-12-23)
+
+
+### Bug Fixes
+
+* **self:** remove usage ([291ef93](https://github.com/stephanebachelier/superapi/commit/291ef93))
+* **test:** add polyfill for phantomjs ([a7ef2b8](https://github.com/stephanebachelier/superapi/commit/a7ef2b8)), closes [#8](https://github.com/stephanebachelier/superapi/issues/8)
+
+### Features
+
+* **middleware:** add middleware concept ([5202605](https://github.com/stephanebachelier/superapi/commit/5202605))
+* **service-handler:** refactor error handling ([75617f8](https://github.com/stephanebachelier/superapi/commit/75617f8))
+
+
+
 <a name"0.10.5"></a>
 ### 0.10.5 (2015-04-20)
 

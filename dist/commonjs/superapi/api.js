@@ -19,7 +19,6 @@ var serviceHandler = function(service) {
     var callback = options.callback || null;
     var edit = options.edit || null;
 
-    var self = this;
     var req = this.request(service, data, params, query);
 
     // edit request if function defined
@@ -27,31 +26,55 @@ var serviceHandler = function(service) {
       edit(req);
     }
 
-    var resolver = {};
+    // default middleware response
+    var applyMiddleware = function () {};
 
-    var p = new Promise(function (resolve, reject) {
-      resolver = {
-        resolve: resolve,
-        reject: reject
+    if (this.middlewares) {
+      var stack = [];
+
+      var next = function () {
+        return new Promise(function (resolve, reject) {
+          stack.push([resolve, reject]);
+        });
       };
+
+      this.middlewares.forEach(function (middleware, index) {
+        middleware.fn(req, next);
+      }, this);
+
+      applyMiddleware = function (err, response) {
+        stack.reverse().forEach(function (promise) {
+          if (err) {
+            return promise[1](err);
+          }
+          return promise[0](response);
+        });
+      };
+    }
+
+    return new Promise(function (resolve, reject) {
+      var failure = function (err) {
+        reject(err);
+        applyMiddleware(err);
+      };
+
+      var success = function (res) {
+        resolve(res);
+        applyMiddleware(null, res);
+      };
+
+      req.on('error', reject);
+      req.on('abort', reject);
+
+      req.end(callback ? callback : function (err, res) {
+        var error = err || res.error;
+        if (error) {
+          return reject(error);
+        }
+
+        resolve(res);
+      });
     });
-
-    req.on('error', resolver.reject);
-
-    req.end(callback ? callback : function(err, res) {
-      if(err) {
-        resolver.reject(err);
-      }
-      else {
-        resolver[!res.error ? "resolve" : "reject"](res);
-      }
-    });
-
-    req.on('abort', function (res) {
-      resolver.reject(res);
-    });
-
-    return p;
   };
 };
 
@@ -250,6 +273,17 @@ Api.prototype = {
     for (var option in options) {
       req[option](options[option]);
     }
+  },
+
+  register: function (name, fn) {
+    if (!this.middlewares) {
+      this.middlewares = [];
+    }
+
+    this.middlewares.push({
+      name: name,
+      fn: fn
+    });
   }
 };
 
