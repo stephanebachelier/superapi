@@ -18,7 +18,7 @@ module.exports = function(config) {
       './node_modules/promise-polyfill/Promise.js',
       {pattern: 'bower_components/superagent/superagent.js', included: false},
       {pattern: 'dist/amd/superapi.amd.js', included: false},
-      {pattern: 'tests/amd/**/*.js', included: false},
+      {pattern: 'tests/amd/**/*.spec.js', included: false},
 
       'tests/test-main.js',
     ],
