@@ -158,5 +158,82 @@ define([
         request.abort();
       });
     });
+
+    describe('configuration', function () {
+      var api;
+      var server;
+
+      beforeEach(function () {
+        api = superapi.default({
+          baseUrl: 'http://example.tld',
+          services: {
+            foo: {
+              path: 'foo'
+            },
+            bar: {
+              path: 'bar',
+              use: {
+                tracker: false
+              }
+            }
+          }
+        });
+        api.agent = superagent;
+
+        // custom tracker header middleware
+        api.register('tracker', function (req) {
+          req.set('X-TRACKER-ID', 1234);
+        });
+
+        // add sinon to fake the XHR call
+        server = sinon.fakeServer.create();
+      });
+
+      afterEach(function () {
+        server.restore();
+        server = null;
+        api = null;
+      });
+
+      it('should execute tracker middleware', function (done) {
+        // configure response
+        server.respondWith('GET',
+          'http://example.tld/foo',
+          [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+        );
+        var spyMiddleware = sinon.spy(function (req) {
+          req.header.should.have.property('X-TRACKER-ID', 1234);
+        });
+
+        api.register('spy', spyMiddleware);
+
+        api.api.foo().then(function (res) {
+          spyMiddleware.should.have.been.called;
+          done();
+        });
+
+        server.respond();
+      });
+
+      it('should disable tracker middleware by setting `use: false`', function (done) {
+        // configure response
+        server.respondWith('GET',
+          'http://example.tld/bar',
+          [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+        );
+        var spyMiddleware = sinon.spy(function (req) {
+          req.header.should.not.have.property('X-TRACKER-ID');
+        });
+
+        api.register('spy', spyMiddleware);
+
+        api.api.bar().then(function (res) {
+          spyMiddleware.should.have.been.called;
+          done();
+        });
+
+        server.respond();
+      });
+    });
   });
 });
