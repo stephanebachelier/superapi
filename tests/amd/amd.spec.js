@@ -569,7 +569,7 @@ define([
 
     it('should throw if no agent defined', function () {
       should.Throw(function () {
-        api.buildRequest();
+        api.request();
       }, 'missing superagent');
     });
 
