@@ -310,6 +310,39 @@ var req = api.api.foo({
 
 `Options`, which are __in fine__ HTTP headers are set before `headers`.
 
+## Middlewares
+
+Since `superapi@0.11` the concept of middlewares have been added. The middleware is simply a function that will receive
+two arguments `req` and `next`. To access the response you need to call `next` which in return return you a promise.
+
+So basically a middleware is :
+
+```js
+function (req, next) {
+  // do something!
+}
+```
+
+If you want to manipulate the request like adding headers, changing the url or whatever you need just access the request!
+
+Changing the url of the request is thus easy:
+```js
+function (req, next) {
+  req.url = 'http://google.fr';
+}
+```
+
+But wait! How we apply a middleware ? Easy ! You only need to `register` your middleware. Order matters.
+
+```js
+api.register('mitm', function (req, next) {
+  req.url = 'http://google.fr'
+});
+```
+
+The use of the name is useless for now, but it is only here to prepare for the next coming version. 
+
+
 ## Development
 
 ### build library
