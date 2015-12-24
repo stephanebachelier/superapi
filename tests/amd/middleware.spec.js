@@ -16,6 +16,9 @@ define([
             foo: {
               path:'foo'
             }
+          },
+          options: {
+            timeout: 100
           }
         });
         api.agent = superagent;
@@ -156,6 +159,30 @@ define([
         api.api.foo().catch(errorHandler);
 
         request.abort();
+      });
+
+      it('should access error on timeout', function (done) {
+        // configure response
+        // server.respondWith('GET',
+        //   'http://example.tld/foo',
+        //   [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+        // );
+        var errorHandler = sinon.spy(function (error) {
+          error.message.match(/timeout/);
+        });
+
+        var middlewareFn = function (error) {
+          errorHandler.should.have.been.called;
+          error.message.match(/timeout/);
+
+          done();
+        };
+
+        api.register('bar', function (req, next) {
+          next().catch(middlewareFn);
+        });
+
+        api.api.foo().catch(errorHandler);
       });
     });
 
