@@ -1,6 +1,6 @@
 "use strict";
 // closure
-var serviceHandler = function(service) {
+var serviceHandler = function(sid) {
   /*
    * Below are the supported options for the serviceHandler:
    *
@@ -19,60 +19,42 @@ var serviceHandler = function(service) {
     var callback = options.callback || null;
     var edit = options.edit || null;
 
-    var req = this.request(service, data, params, query);
+    var req = this.request(sid, data, params, query);
 
     // edit request if function defined
     if (edit && "function" === typeof edit) {
       edit(req);
     }
 
-    // default middleware response
-    var applyMiddleware = function () {};
-
-    if (this.middlewares) {
-      var stack = [];
-
-      var next = function () {
-        return new Promise(function (resolve, reject) {
-          stack.push([resolve, reject]);
-        });
-      };
-
-      this.middlewares.forEach(function (middleware, index) {
-        middleware.fn(req, next);
-      }, this);
-
-      applyMiddleware = function (err, response) {
-        stack.reverse().forEach(function (promise) {
-          if (err) {
-            return promise[1](err);
-          }
-          return promise[0](response);
-        });
-      };
-    }
+    // middleware response handler
+    var applyMiddlewares = this._applyMiddlewares(req, this.service(sid));
 
     return new Promise(function (resolve, reject) {
       var failure = function (err) {
         reject(err);
-        applyMiddleware(err);
+        applyMiddlewares(err);
       };
 
       var success = function (res) {
         resolve(res);
-        applyMiddleware(null, res);
+        applyMiddlewares(null, res);
       };
 
-      req.on('error', reject);
-      req.on('abort', reject);
+      req.on('error', failure);
+      req.on('abort', function () {
+        var error = new Error('Request has been aborted');
+        error.aborted = true;
+
+        failure(error);
+      });
 
       req.end(callback ? callback : function (err, res) {
         var error = err || res.error;
         if (error) {
-          return reject(error);
+          return failure(error);
         }
 
-        resolve(res);
+        success(res);
       });
     });
   };
@@ -200,10 +182,10 @@ Api.prototype = {
       headers: service.headers
     }
 
-    return this.sendRequest(method, this.buildUrl(id, params, query), data, options);
+    return this.buildRequest(method, this.buildUrl(id, params, query), data, options);
   },
 
-  sendRequest: function (method, url, data, opts) {
+  buildRequest: function (method, url, data, opts) {
     opts = opts || {};
 
     if (!this.agent) {
@@ -284,6 +266,37 @@ Api.prototype = {
       name: name,
       fn: fn
     });
+  },
+
+  _applyMiddlewares: function (req, service) {
+    if (!this.middlewares) {
+      return function () {};
+    }
+
+    var stack = [];
+
+    var next = function () {
+      return new Promise(function (resolve, reject) {
+        stack.push([resolve, reject]);
+      });
+    };
+
+    this.middlewares
+      .filter(function (middleware) {
+        return !service.use || (service.use && service.use[middleware.name] !== false);
+      })
+      .forEach(function (middleware, index) {
+        middleware.fn(req, next, service);
+      }, this);
+
+    return function (err, response) {
+      stack.reverse().forEach(function (promise) {
+        if (err) {
+          return promise[1](err);
+        }
+        return promise[0](response);
+      });
+    };
   }
 };
 

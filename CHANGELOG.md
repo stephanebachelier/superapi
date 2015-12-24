@@ -1,3 +1,15 @@
+<a name="0.11.1"></a>
+## [0.11.1](https://github.com/stephanebachelier/superapi/compare/0.11.0...v0.11.1) (2015-12-24)
+
+
+### Features
+
+* **api:** throw specific error on abort ([4443ccb](https://github.com/stephanebachelier/superapi/commit/4443ccb))
+* **bower:** upgrade super agent dependency ([24a0427](https://github.com/stephanebachelier/superapi/commit/24a0427))
+* **middleware:** enable disabling for a service by configuration ([ea280f4](https://github.com/stephanebachelier/superapi/commit/ea280f4))
+
+
+
 <a name="0.11.0"></a>
 # [0.11.0](https://github.com/stephanebachelier/superapi/compare/0.10.6...v0.11.0) (2015-12-24)
 
