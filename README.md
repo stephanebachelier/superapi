@@ -1,5 +1,7 @@
 # superapi
 
+[![Build Status](https://travis-ci.org/stephanebachelier/superapi.svg)](https://travis-ci.org/stephanebachelier/superapi)
+
 ## Description
 
 Superapi is a (super) wrapper around the excellent superagent library to help configuring any service call to an API or any  HTTP request.
