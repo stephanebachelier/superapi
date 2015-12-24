@@ -128,19 +128,19 @@ define([
         server.respond();
       });
 
-      it('should access error on timeout', function (done) {
+      it('should access abort error', function (done) {
         // configure response
         // server.respondWith('GET',
         //   'http://example.tld/foo',
         //   [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
         // );
         var errorHandler = sinon.spy(function (error) {
-          error.message.match(/timeout/);
+          error.should.have.property('aborted', true);
         });
 
         var middlewareFn = function (error) {
           errorHandler.should.have.been.called;
-          error.message.match(/timeout/);
+          error.should.have.property('aborted', true);
 
           done();
         };
