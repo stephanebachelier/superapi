@@ -15,7 +15,7 @@ requirejs.config({
   shim: {},
 
   paths: {
-    superagent: '../bower_components/superagent/superagent',
+    superagent: '../bower_components/superagent-dist/superagent',
     superapi: 'amd/superapi.amd'
   },
 

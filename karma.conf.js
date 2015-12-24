@@ -16,7 +16,7 @@ module.exports = function(config) {
     files: [
       './node_modules/phantomjs-polyfill/bind-polyfill.js',
       './node_modules/promise-polyfill/Promise.js',
-      {pattern: 'bower_components/superagent/superagent.js', included: false},
+      {pattern: 'bower_components/superagent-dist/superagent.js', included: false},
       {pattern: 'dist/amd/superapi.amd.js', included: false},
       {pattern: 'tests/amd/**/*.spec.js', included: false},
 
