@@ -475,6 +475,26 @@ define([
     });
   });
 
+  define('build request', function () {
+    it('buildRequest - should support different cases for the HTTP method', function () {
+      var api = superapi.default();
+      api.agent = superagent;
+
+      api.buildRequest('get', 'http://example.tld').method.should.eql('get');
+      api.buildRequest('GET', 'http://example.tld').method.should.eql('get');
+      api.buildRequest('GeT', 'http://example.tld').method.should.eql('get');
+      api.buildRequest('Get', 'http://example.tld').method.should.eql('get');
+    });
+
+    it('buildRequest - should throw for non HTTP method', function () {
+      var api = superapi.default();
+      api.agent = superagent;
+
+      should.Throw(function () {
+        api.buildRequest('foo', 'http://example.tld');
+      }, 'Unsupported method');
+    });
+  });
 
   describe('request', function () {
     var api;
@@ -571,13 +591,6 @@ define([
       should.Throw(function () {
         api.request();
       }, 'missing superagent');
-    });
-
-    it('should throw if no method defined', function () {
-      api.agent = superagent;
-      should.Throw(function () {
-        api.buildRequest();
-      }, 'Unsupported method');
     });
   });
 
