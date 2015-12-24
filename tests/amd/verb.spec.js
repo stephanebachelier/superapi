@@ -139,5 +139,110 @@ define([
         });
       });
     });
+
+    describe('helpers', function () {
+      var api;
+      var server;
+
+      beforeEach(function () {
+        api = superapi.default({
+          baseUrl: 'http://example.tld'
+        });
+        api.agent = superagent;
+
+        // add sinon to fake the XHR call
+        server = sinon.fakeServer.create();
+      });
+
+      afterEach(function () {
+        server.restore();
+        server = null;
+        api = null;
+      });
+
+      it('should send a GET request', function (done) {
+        server.respondWith('GET',
+          'http://example.tld/foo',
+          [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+        );
+
+        api.get('http://example.tld/foo').then(function (resp) {
+          resp.req.url.should.eq('http://example.tld/foo');
+          done();
+        });
+
+        server.respond();
+      });
+
+      it('should send a POST request', function (done) {
+        server.respondWith('POST',
+          'http://example.tld/foo',
+          [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+        );
+
+        api.post('http://example.tld/foo').then(function (resp) {
+          resp.req.url.should.eq('http://example.tld/foo');
+          done();
+        });
+
+        server.respond();
+      });
+
+      it('should send a PUT request', function (done) {
+        server.respondWith('PUT',
+          'http://example.tld/foo',
+          [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+        );
+
+        api.put('http://example.tld/foo').then(function (resp) {
+          resp.req.url.should.eq('http://example.tld/foo');
+          done();
+        });
+
+        server.respond();
+      });
+
+      it('should send a DELETE request', function (done) {
+        server.respondWith('DELETE',
+          'http://example.tld/foo',
+          [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+        );
+
+        api.del('http://example.tld/foo').then(function (resp) {
+          resp.req.url.should.eq('http://example.tld/foo');
+          done();
+        });
+
+        server.respond();
+      });
+
+      it('should send a PATCH request', function (done) {
+        server.respondWith('PATCH',
+          'http://example.tld/foo',
+          [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+        );
+
+        api.patch('http://example.tld/foo').then(function (resp) {
+          resp.req.url.should.eq('http://example.tld/foo');
+          done();
+        });
+
+        server.respond();
+      });
+
+      it('should send a HEAD request', function (done) {
+        server.respondWith('HEAD',
+          'http://example.tld/foo',
+          [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+        );
+
+        api.head('http://example.tld/foo').then(function (resp) {
+          resp.req.url.should.eq('http://example.tld/foo');
+          done();
+        });
+
+        server.respond();
+      });
+    })
   });
 });
