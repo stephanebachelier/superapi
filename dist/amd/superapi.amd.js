@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.11.1
+  @version 0.12.0
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -28,7 +28,7 @@ define("superapi/api",
         var callback = options.callback || null;
         var edit = options.edit || null;
 
-        var req = this.request(sid, data, params, query);
+        var req = this.request(sid, data, params, query, options.method);
 
         // edit request if function defined
         if (edit && "function" === typeof edit) {
@@ -97,12 +97,12 @@ define("superapi/api",
       },
 
       service: function(id) {
-        return this.config.services[id];
+        return this.config.services ? this.config.services[id] : null;
       },
 
       url: function(id) {
         var url = this.config.baseUrl;
-        var resource = this.service(id);
+        var resource = this.service(id) || id;
 
         // from time being it"s a simple map
         if (resource) {
@@ -181,20 +181,52 @@ define("superapi/api",
         return url;
       },
 
-      request: function(id, data, params, query) {
+      request: function(id, data, params, query, method) {
         var service = this.service(id);
-        var method = (typeof service === "string" ? "get" : service.method ||
-          "get").toLowerCase();
+        method = method || (service && service.method ? service.method : "get");
 
-        var options = {
+        var options = service ? {
           options: service.options,
           headers: service.headers
-        }
+        } : {}
 
         return this.buildRequest(method, this.buildUrl(id, params, query), data, options);
       },
 
+      get: function(url, options, data) {
+        return this._httpVerb('get', url, options, data);
+      },
+
+      post: function(url, options, data) {
+        return this._httpVerb('post', url, options, data);
+      },
+
+      put: function(url, options, data) {
+        return this._httpVerb('put', url, options, data);
+      },
+
+      del: function(url, options, data) {
+        return this._httpVerb('del', url, options, data);
+      },
+
+      patch: function(url, options, data) {
+        return this._httpVerb('patch', url, options, data);
+      },
+
+      head: function(url, options, data) {
+        return this._httpVerb('head', url, options, data);
+      },
+
+      _httpVerb: function(method, url, options, data) {
+        options = options || {};
+        options.data = data;
+        options.method = method;
+
+        return serviceHandler(url).call(this, options);
+      },
+
       buildRequest: function (method, url, data, opts) {
+        method = method.toLowerCase();
         opts = opts || {};
 
         if (!this.agent) {

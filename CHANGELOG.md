@@ -1,3 +1,23 @@
+<a name="0.12.0"></a>
+# [0.12.0](https://github.com/stephanebachelier/superapi/compare/0.11.1...v0.12.0) (2015-12-24)
+
+
+### Bug Fixes
+
+* **api:** add guard condition against no services ([753d490](https://github.com/stephanebachelier/superapi/commit/753d490))
+* **test:** update test to use buildRequest ([8e75110](https://github.com/stephanebachelier/superapi/commit/8e75110))
+
+### Features
+
+* **api:** add `get` syntactic sugar helper ([8d10c77](https://github.com/stephanebachelier/superapi/commit/8d10c77))
+* **api:** add a generic request caller ([a0af144](https://github.com/stephanebachelier/superapi/commit/a0af144))
+* **http-verbs:** add all http verb methods ([4d42651](https://github.com/stephanebachelier/superapi/commit/4d42651))
+* **request:** add extra `method` parameter ([56ab663](https://github.com/stephanebachelier/superapi/commit/56ab663))
+* **service-handler:** add support for option method ([d0a74fc](https://github.com/stephanebachelier/superapi/commit/d0a74fc))
+* **url:** support either the id or a path or url ([c7b3767](https://github.com/stephanebachelier/superapi/commit/c7b3767))
+
+
+
 <a name="0.11.1"></a>
 ## [0.11.1](https://github.com/stephanebachelier/superapi/compare/0.11.0...v0.11.1) (2015-12-24)
 
