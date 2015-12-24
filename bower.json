@@ -29,6 +29,6 @@
     "package.json"
   ],
   "dependencies": {
-    "superagent": "~0.20.0"
+    "superagent-dist": "~1.6.2"
   }
 }
