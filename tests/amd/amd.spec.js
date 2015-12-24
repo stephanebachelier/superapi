@@ -569,14 +569,14 @@ define([
 
     it('should throw if no agent defined', function () {
       should.Throw(function () {
-        api.sendRequest();
+        api.buildRequest();
       }, 'missing superagent');
     });
 
     it('should throw if no method defined', function () {
       api.agent = superagent;
       should.Throw(function () {
-        api.sendRequest();
+        api.buildRequest();
       }, 'Unsupported method');
     });
   });
