@@ -24,6 +24,9 @@
     "url": "https://github.com/stephanebachelier/superapi/issues"
   },
   "homepage": "https://github.com/stephanebachelier/superapi",
+  "engines": {
+    "node": ">=0.10"
+  },
   "dependencies": {
     "superagent": "^1.6.1"
   },
