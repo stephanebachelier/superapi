@@ -42,67 +42,6 @@ define("superapi/api",
   ["exports"],
   function(__exports__) {
     "use strict";
-    // closure
-    var serviceHandler = function(sid) {
-      /*
-       * Below are the supported options for the serviceHandler:
-       *
-       * - data (object): request data payload
-       * - params (object): use to replace the tokens in the url
-       * - query (object): use to build the query string appended to the url
-       * - callback (function): callback to use, with a default which emits 'success' or 'error'
-       *   event depending on res.ok value
-       * - edit (function): callback to use, to tweak req if needed.
-       */
-      return function(options) {
-        options = options || {};
-        var data = options.data || {};
-        var params = options.params || {};
-        var query = options.query || {};
-        var callback = options.callback || null;
-        var edit = options.edit || null;
-
-        var req = this.request(sid, data, params, query, options.method);
-
-        // edit request if function defined
-        if (edit && "function" === typeof edit) {
-          edit(req);
-        }
-
-        // middleware response handler
-        var applyMiddlewares = this._applyMiddlewares(req, this.service(sid));
-
-        return new Promise(function (resolve, reject) {
-          var failure = function (err) {
-            reject(err);
-            applyMiddlewares(err);
-          };
-
-          var success = function (res) {
-            resolve(res);
-            applyMiddlewares(null, res);
-          };
-
-          req.on('error', failure);
-          req.on('abort', function () {
-            var error = new Error('Request has been aborted');
-            error.aborted = true;
-
-            failure(error);
-          });
-
-          req.end(callback ? callback : function (err, res) {
-            var error = err || res.error;
-            if (error) {
-              return failure(error);
-            }
-
-            success(res);
-          });
-        });
-      };
-    };
-
     function Api(config) {
       // create a hash-liked object where all the services handlers are registered
       this.api = Object.create(null);
@@ -125,7 +64,7 @@ define("superapi/api",
           if (!Object.prototype.hasOwnProperty(this, name)) {
             // syntatic sugar: install a service handler available on
             // the api instance with service name
-            this.api[name] = serviceHandler(name).bind(this);
+            this.api[name] = Api.serviceHandler(name).bind(this);
           }
         }
       },
@@ -256,7 +195,7 @@ define("superapi/api",
         options.data = data;
         options.method = method;
 
-        return serviceHandler(url).call(this, options);
+        return Api.serviceHandler(url).call(this, options);
       },
 
       buildRequest: function (method, url, data, opts) {
@@ -377,16 +316,82 @@ define("superapi/api",
 
     __exports__["default"] = Api;
   });
+define("superapi/service-handler", 
+  ["exports"],
+  function(__exports__) {
+    "use strict";
+    __exports__["default"] = function serviceHandler (sid) {
+      /*
+       * Below are the supported options for the serviceHandler:
+       *
+       * - data (object): request data payload
+       * - params (object): use to replace the tokens in the url
+       * - query (object): use to build the query string appended to the url
+       * - callback (function): callback to use, with a default which emits 'success' or 'error'
+       *   event depending on res.ok value
+       * - edit (function): callback to use, to tweak req if needed.
+       */
+      return function(options) {
+        options = options || {};
+        var data = options.data || {};
+        var params = options.params || {};
+        var query = options.query || {};
+        var callback = options.callback || null;
+        var edit = options.edit || null;
+
+        var req = this.request(sid, data, params, query, options.method);
+
+        // edit request if function defined
+        if (edit && "function" === typeof edit) {
+          edit(req);
+        }
+
+        // middleware response handler
+        var applyMiddlewares = this._applyMiddlewares(req, this.service(sid));
+
+        var result = function (resolver) {
+          return function (error, response) {
+            resolver(error, response);
+            applyMiddlewares(error, response);
+          }
+        }
+
+        return new Promise(function (resolve, reject) {
+          var failure = result(function (err, res) { reject(err); });
+          var success = result(function (err, res) { resolve(res); });
+
+          req.on('error', failure);
+          req.on('abort', function () {
+            var error = new Error('Request has been aborted');
+            error.aborted = true;
+
+            failure(error);
+          });
+
+          req.end(callback ? callback : function (err, res) {
+            var error = err || res.error;
+            if (error) {
+              return failure(error, res);
+            }
+
+            success(null, res);
+          });
+        });
+      };
+    };
+  });
 define("superapi", 
-  ["./superapi/api","exports"],
-  function(__dependency1__, __exports__) {
+  ["./superapi/api","./superapi/service-handler","exports"],
+  function(__dependency1__, __dependency2__, __exports__) {
     "use strict";
     var Api = __dependency1__["default"];
+    var serviceHandler = __dependency2__["default"];
 
     function superapi(config) {
       return new Api(config);
     }
 
+    Api.serviceHandler = serviceHandler;
     superapi.prototype.Api = Api;
 
     // export API

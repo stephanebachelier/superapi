@@ -1,3 +1,13 @@
+<a name="0.12.1"></a>
+## [0.12.1](https://github.com/stephanebachelier/superapi/compare/0.12.0...v0.12.1) (2015-12-26)
+
+
+### Features
+
+* **service-handler:** export service-handler in its own overridable module ([d277cd1](https://github.com/stephanebachelier/superapi/commit/d277cd1))
+
+
+
 <a name="0.12.0"></a>
 # [0.12.0](https://github.com/stephanebachelier/superapi/compare/0.11.1...v0.12.0) (2015-12-24)
 
