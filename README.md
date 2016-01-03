@@ -2,6 +2,12 @@
 
 [![Build Status](https://travis-ci.org/stephanebachelier/superapi.svg)](https://travis-ci.org/stephanebachelier/superapi)
 
+Any service call should be as easy as calling a simple function!!!!
+
+Really.
+
+Calling the api login service should be as easy as `api.login(params)`.
+
 ## Description
 
 Superapi is a (super) wrapper around the excellent superagent library to help configuring any service call to an API or any  HTTP request.
@@ -11,8 +17,15 @@ The idea is to remove any setup while calling an API. Just provide a service id,
 Briefly `superapi` is a small library to never configure XHR calls in your code. Why ? Because :
 - it makes reading harder,
 - you will possibly introduce bugs as you will duplicate code to configure all XHR
-- difficult to override for different environments
+- difficult to override your code for different environments
 - hardcoded url or paths in your code, which implies that for any changes in URL, paths or whatever, let's say send in url form encoded format instead of JSON, you will have to dig into your code base to make changes.
+
+So superapi is XHR built on steroid using `superagent`, JSON configuration and middlewares to give you simple `Promise-based functions` to use to call any service API you need.
+
+And if you don't want to use a configuration you can still you all HTTP verb helpers using `api.get()`, `api.post()`, ...
+
+You should not have to parameterize the api calls when you only need to use it!
+
 
 ## Notice
 
