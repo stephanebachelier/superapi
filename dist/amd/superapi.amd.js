@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.12.1
+  @version 0.13.0
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -237,6 +237,20 @@ define("superapi/api",
         }
       },
 
+      status: function (name, handler) {
+        if (!this.middlewares) {
+          this.register('status', Api.middlewares.status());
+        }
+
+        var status = this.middlewares.filter(function (middleware) {
+          return middleware.name === 'status';
+        })[0];
+
+        status.fn.set(name, handler);
+
+        return status;
+      },
+
       register: function (name, fn) {
         if (!this.middlewares) {
           this.middlewares = [];
@@ -282,6 +296,58 @@ define("superapi/api",
 
     __exports__["default"] = Api;
   });
+define("superapi/middlewares/status", 
+  ["exports"],
+  function(__exports__) {
+    "use strict";
+    /*
+    # status handlers middleware
+    {
+      304: fn,
+      401: fn,
+      403: fn,
+    };
+
+    */
+
+    __exports__["default"] = function () {
+      var handlers = {};
+
+      var middleware = function (req, next) {
+        next()
+          .then(function (res) {
+            if (!res) {
+              return;
+            }
+
+            var handler = handlers[res.status];
+            if (!handler) {
+              return;
+            }
+
+            return handler(req, res);
+          })
+          .catch(function (error) {
+            var handler = handlers[error.status || error.reason];
+            if (!handler) {
+              return;
+            }
+
+            return handler(req, error.response ? error.response : error);
+          });
+      };
+
+      middleware.set = function (code, handler) {
+        handlers[code] = handler;
+      };
+
+      middleware.get = function (code) {
+        return handlers[code];
+      };
+
+      return middleware;
+    };
+  });
 define("superapi/service-handler", 
   ["exports"],
   function(__exports__) {
@@ -298,31 +364,31 @@ define("superapi/service-handler",
        * - edit (function): callback to use, to tweak req if needed.
        */
       return function(options) {
-        options = options || {};
-        var data = options.data || {};
-        var params = options.params || {};
-        var query = options.query || {};
-        var callback = options.callback || null;
-        var edit = options.edit || null;
-
-        var req = this.request(sid, data, params, query, options.method);
-
-        // edit request if function defined
-        if (edit && "function" === typeof edit) {
-          edit(req);
-        }
-
-        // middleware response handler
-        var applyMiddlewares = this._applyMiddlewares(req, this.service(sid));
-
-        var result = function (resolver) {
-          return function (error, response) {
-            resolver(error, response);
-            applyMiddlewares(error, response);
-          }
-        }
-
         return new Promise(function (resolve, reject) {
+          options = options || {};
+          var data = options.data || {};
+          var params = options.params || {};
+          var query = options.query || {};
+          var callback = options.callback || null;
+          var edit = options.edit || null;
+
+          var req = this.request(sid, data, params, query, options.method);
+
+          // edit request if function defined
+          if (edit && "function" === typeof edit) {
+            edit(req);
+          }
+
+          // middleware response handler
+          var applyMiddlewares = this._applyMiddlewares(req, this.service(sid));
+
+          var result = function (resolver) {
+            return function (error, response) {
+              resolver(error, response);
+              applyMiddlewares(error, response);
+            }
+          }
+
           var failure = result(function (err, res) { reject(err); });
           var success = result(function (err, res) { resolve(res); });
 
@@ -347,17 +413,23 @@ define("superapi/service-handler",
     };
   });
 define("superapi", 
-  ["./superapi/api","./superapi/service-handler","exports"],
-  function(__dependency1__, __dependency2__, __exports__) {
+  ["./superapi/api","./superapi/service-handler","./superapi/middlewares/status","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
     "use strict";
     var Api = __dependency1__["default"];
     var serviceHandler = __dependency2__["default"];
+    var status = __dependency3__["default"];
 
     function superapi(config) {
       return new Api(config);
     }
 
     Api.serviceHandler = serviceHandler;
+
+    Api.middlewares = {
+      status: status
+    };
+
     superapi.prototype.Api = Api;
 
     // export API
