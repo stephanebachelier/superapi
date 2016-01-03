@@ -11,31 +11,35 @@ exports["default"] = function serviceHandler (sid) {
    * - edit (function): callback to use, to tweak req if needed.
    */
   return function(options) {
-    options = options || {};
-    var data = options.data || {};
-    var params = options.params || {};
-    var query = options.query || {};
-    var callback = options.callback || null;
-    var edit = options.edit || null;
-
-    var req = this.request(sid, data, params, query, options.method);
-
-    // edit request if function defined
-    if (edit && "function" === typeof edit) {
-      edit(req);
-    }
-
-    // middleware response handler
-    var applyMiddlewares = this._applyMiddlewares(req, this.service(sid));
-
-    var result = function (resolver) {
-      return function (error, response) {
-        resolver(error, response);
-        applyMiddlewares(error, response);
-      }
-    }
-
     return new Promise(function (resolve, reject) {
+      options = options || {};
+      var data = options.data || {};
+      var params = options.params || {};
+      var query = options.query || {};
+      var callback = options.callback || null;
+      var edit = options.edit || null;
+
+      var req = this.request(sid, data, params, query, options.method);
+
+      // edit request if function defined
+      if (edit && "function" === typeof edit) {
+        edit(req);
+      }
+
+      // middleware response handler
+      var applyMiddlewares = this._applyMiddlewares(req, this.service(sid));
+
+      var result = function (resolver) {
+        return function (error, response) {
+          resolver(error, response);
+          applyMiddlewares(error, response);
+
+          if (callback) {
+            callback(error, response);
+          }
+        }
+      }
+
       var failure = result(function (err, res) { reject(err); });
       var success = result(function (err, res) { resolve(res); });
 
@@ -47,7 +51,7 @@ exports["default"] = function serviceHandler (sid) {
         failure(error);
       });
 
-      req.end(callback ? callback : function (err, res) {
+      req.end(function (err, res) {
         var error = err || res.error;
         if (error) {
           return failure(error, res);
@@ -55,6 +59,6 @@ exports["default"] = function serviceHandler (sid) {
 
         success(null, res);
       });
-    });
+    }.bind(this));
   };
 };
