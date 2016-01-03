@@ -262,5 +262,67 @@ define([
         server.respond();
       });
     });
+
+    describe('multiple middlewares', function () {
+      var api;
+      var server;
+
+      beforeEach(function () {
+        api = superapi.default({
+          baseUrl: 'http://example.tld',
+          services: {
+            foo: {
+              path: 'foo'
+            },
+            bar: {
+              path: 'bar',
+              use: {
+                tracker: false
+              }
+            }
+          }
+        });
+        api.agent = superagent;
+
+        // custom middlewares
+        api.register('foo', function (req) {
+          req.set('foo', 'foo');
+        });
+
+        api.register('bar', function (req) {
+          req.set('bar', 'bar');
+        });
+
+        // add sinon to fake the XHR call
+        server = sinon.fakeServer.create();
+      });
+
+      afterEach(function () {
+        server.restore();
+        server = null;
+        api = null;
+      });
+
+      it('should all be executed', function (done) {
+        // configure response
+        server.respondWith('GET',
+          'http://example.tld/foo',
+          [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+        );
+        var spyMiddleware = sinon.spy(function (req) {
+          req.header.should.have.property('foo', 'foo');
+          req.header.should.have.property('bar', 'bar');
+        });
+
+        api.register('spy', spyMiddleware);
+
+        api.api.foo().then(function (res) {
+          spyMiddleware.should.have.been.called;
+          done();
+        });
+
+        server.respond();
+      });
+    });
   });
 });
