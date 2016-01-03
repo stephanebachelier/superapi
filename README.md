@@ -334,7 +334,7 @@ function (req, next) {
 }
 ```
 
-But wait! How we apply a middleware ? Easy ! You only need to `register` your middleware. Order matters.
+But wait! How we apply a middleware ? Easy ! You only need to `register` your middleware.
 
 ```js
 api.register('mitm', function (req, next) {
@@ -342,7 +342,29 @@ api.register('mitm', function (req, next) {
 });
 ```
 
-The use of the name is useless for now, but it is only here to prepare for the next coming version. 
+Be careful that order matters.
+
+```js
+api.register('foo', function (req, next) {
+  req.url = 'https://google.com'
+});
+
+api.register('bar', function (req, next) {
+  req.url = 'https://twitter.com'
+});
+```
+Will result in a request to `https://twitter.com`, while the example below will result in a request to `https://google.com`.
+
+```js
+api.register('bar', function (req, next) {
+  req.url = 'https://twitter.com'
+});
+api.register('foo', function (req, next) {
+  req.url = 'https://google.com'
+});
+```
+
+The use of the name is useless for now, but it is only here to prepare for the next coming version.
 
 
 ## Development
