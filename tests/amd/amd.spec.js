@@ -509,7 +509,6 @@ define([
           }
         }
       });
-      api.agent = superagent;
 
       // add sinon to fake the XHR call
       server = sinon.fakeServer.create();
@@ -521,6 +520,12 @@ define([
       api = null;
     });
 
+    it('should throw if no agent defined', function () {
+      should.Throw(function () {
+        api.request();
+      }, 'missing superagent');
+    });
+
     it('api sugar should build the correct url with any tokens or query args', function (done) {
       // configure response
       server.respondWith('GET',
@@ -528,6 +533,7 @@ define([
         [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
       );
 
+      api.agent = superagent;
       api.api.foo({
         params: {
           foo: 'john',
@@ -557,6 +563,7 @@ define([
         req.url = fakeUrl
       });
 
+      api.agent = superagent;
       api.api.foo({
         params: {
           foo: 'john',
@@ -584,6 +591,7 @@ define([
         throw new Error('broken edit function');
       });
 
+      api.agent = superagent;
       api.api.foo({
         params: {
           foo: 'john',
@@ -601,24 +609,6 @@ define([
       });
 
       server.respond();
-    });
-  });
-
-  describe('send request', function () {
-    var api;
-
-    beforeEach(function () {
-      api = superapi.default();
-    });
-
-    afterEach(function () {
-      api = null;
-    });
-
-    it('should throw if no agent defined', function () {
-      should.Throw(function () {
-        api.request();
-      }, 'missing superagent');
     });
   });
 
