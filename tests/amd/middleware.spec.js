@@ -261,6 +261,33 @@ define([
 
         server.respond();
       });
+
+      it('should not break everything if a middleware breaks', function (done) {
+        // configure response
+        server.respondWith('GET',
+          'http://example.tld/bar',
+          [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+        );
+        var spyMiddleware = sinon.spy(function (req) {
+          throw new Error('boo!');
+        });
+
+        var thenSpy = sinon.spy(function () {});
+
+        api.register('spy', spyMiddleware);
+
+        api.api.foo()
+          .then(thenSpy)
+          .catch(function (err, res) {
+            err.message.should.eql('boo!');
+            
+            thenSpy.should.not.have.been.called;
+            spyMiddleware.should.been.called;
+            done();
+          });
+
+        server.respond();
+      });
     });
 
     describe('multiple middlewares', function () {
