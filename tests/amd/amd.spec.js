@@ -574,6 +574,34 @@ define([
 
       server.respond();
     });
+
+    it('should catch any error in edit handler', function (done) {
+      server.respondWith('GET', 'http://example.tld/user/john.doe.json?content=post&since=19700101',
+        [200, {'Content-Type': 'application/json'}, '{"result": "ok"}']
+      );
+
+      var editFn = sinon.spy(function (req) {
+        throw new Error('broken edit function');
+      });
+
+      api.api.foo({
+        params: {
+          foo: 'john',
+          bar: 'doe'
+        },
+        query: {
+          content: 'post',
+          since: '19700101'
+        },
+        edit: editFn
+      }).catch(function (err) {
+        err.message.should.eql('broken edit function');
+        editFn.should.have.been.called;
+        done();
+      });
+
+      server.respond();
+    });
   });
 
   describe('send request', function () {
