@@ -311,6 +311,9 @@ define("superapi/api",
 
         this.middlewares
           .filter(function (middleware) {
+            if (!service) {
+              return true;
+            }
             return !service.use || (service.use && service.use[middleware.name] !== false);
           })
           .forEach(function (middleware, index) {

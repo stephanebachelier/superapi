@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.14.0
+  @version 0.14.1
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -277,6 +277,9 @@ define("superapi/api",
 
         this.middlewares
           .filter(function (middleware) {
+            if (!service) {
+              return true;
+            }
             return !service.use || (service.use && service.use[middleware.name] !== false);
           })
           .forEach(function (middleware, index) {
