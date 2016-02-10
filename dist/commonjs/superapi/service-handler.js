@@ -26,13 +26,18 @@ exports["default"] = function serviceHandler (sid) {
         edit(req);
       }
 
-      // middleware response handler
-      var applyMiddlewares = this._applyMiddlewares(req, this.service(sid));
-
-      var result = function (resolver) {
+      var result = function (resolver, middlewares) {
         return function (error, response) {
+          if (middlewares) {
+            middlewares.forEach(function (middleware) {
+              if (error) {
+                middleware[1](error);
+              }
+              middleware[0](response);
+            });
+          }
+
           resolver(error, response);
-          applyMiddlewares(error, response);
 
           if (callback) {
             callback(error, response);
@@ -40,25 +45,30 @@ exports["default"] = function serviceHandler (sid) {
         }
       }
 
-      var failure = result(function (err, res) { reject(err); });
-      var success = result(function (err, res) { resolve(res); });
+      var failure;
+      var success;
+      var middlewares;
 
-      req.on('error', failure);
-      req.on('abort', function () {
-        var error = new Error('Request has been aborted');
-        error.aborted = true;
+      var agent = this.agent();
 
-        failure(error);
-      });
+      return this._applyMiddlewares(req, sid)
+        .then(function (data) {
+          middlewares = data.stack;
 
-      req.end(function (err, res) {
-        var error = err || res.error;
-        if (error) {
-          return failure(error, res);
-        }
+          failure = result(function (err, res) { reject(err); }, middlewares);
+          success = result(function (err, res) { resolve(res); }, middlewares);
 
-        success(null, res);
-      });
+          return data.pending;
+        })
+        .then(function (response) {
+          return agent.handleResponse(req, response);
+        })
+        .then(function (res) {
+          return success(null, res);
+        })
+        .catch(function (err) {
+          return failure(err);
+        });
     }.bind(this));
   };
 };

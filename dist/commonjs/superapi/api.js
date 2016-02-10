@@ -1,4 +1,6 @@
 "use strict";
+var Agent = require("./superapi/agent")["default"];
+
 function Api(config) {
   // create a hash-liked object where all the services handlers are registered
   this.api = Object.create(null);
@@ -17,6 +19,10 @@ Api.prototype = {
       return;
     }
 
+    if (this._agent) {
+      this._agent.config = config;
+    }
+
     for (var name in config.services) {
       if (!Object.prototype.hasOwnProperty(this, name)) {
         // syntatic sugar: install a service handler available on
@@ -24,6 +30,26 @@ Api.prototype = {
         this.api[name] = Api.serviceHandler(name).bind(this);
       }
     }
+  },
+
+  agent: function() {
+    if (!this._agent) {
+      throw new Error("no agent configured");
+    }
+    return this._agent;
+  },
+
+  withAgent: function (agent) {
+    if (!agent) {
+      throw new Error("missing agent");
+    }
+    this._agent = new Agent(agent);
+
+    if (this.config) {
+      this._agent.config = this.config;
+    }
+
+    return this;
   },
 
   service: function(id) {
@@ -120,34 +146,34 @@ Api.prototype = {
       headers: service.headers
     } : {}
 
-    return this.buildRequest(method, this.buildUrl(id, params, query), data, options);
+    return this.agent().buildRequest(method, this.buildUrl(id, params, query), data, options);
   },
 
   get: function(url, options, data) {
-    return this._httpVerb('get', url, options, data);
+    return this._http('get', url, options, data);
   },
 
   post: function(url, options, data) {
-    return this._httpVerb('post', url, options, data);
+    return this._http('post', url, options, data);
   },
 
   put: function(url, options, data) {
-    return this._httpVerb('put', url, options, data);
+    return this._http('put', url, options, data);
   },
 
   del: function(url, options, data) {
-    return this._httpVerb('del', url, options, data);
+    return this._http('del', url, options, data);
   },
 
   patch: function(url, options, data) {
-    return this._httpVerb('patch', url, options, data);
+    return this._http('patch', url, options, data);
   },
 
   head: function(url, options, data) {
-    return this._httpVerb('head', url, options, data);
+    return this._http('head', url, options, data);
   },
 
-  _httpVerb: function(method, url, options, data) {
+  _http: function(method, url, options, data) {
     options = options || {};
     options.data = data;
     options.method = method;
@@ -155,87 +181,31 @@ Api.prototype = {
     return Api.serviceHandler(url).call(this, options);
   },
 
-  buildRequest: function (method, url, data, opts) {
-    method = method.toLowerCase();
-    opts = opts || {};
-
-    if (!this.agent) {
-      throw new Error("missing superagent or any api compatible agent.");
-    }
-
-    // fix for delete being a reserved word
-    if (method === "delete") {
-      method = "del";
-    }
-
-    // reset data for delete operation
-    // kind of hack as request.del signature is different from others being `function(url, fn)`
-    // instead of `function(url, data, fn)`
-    if (method === "del") {
-      data = undefined;
-    }
-
-    var request = this.agent[method];
-    if (!request) {
-      throw new Error("Unsupported method [" + method + "]");
-    }
-
-    var _req = request(url, data);
-
-    // add global headers
-    this._setHeaders(_req, this.config.headers);
-
-    // add global options to request headers
-    this._setOptions(_req, this.config.options);
-
-    // add service options to request headers
-    this._setOptions(_req, opts.options);
-
-    // add service headers
-    this._setHeaders(_req, opts.headers);
-
-    // add runtime headers
-    this._setHeaders(_req, this.headers);
-
-    // set credentials
-    if (this.config.withCredentials) {
-      _req.withCredentials();
-    }
-
-    return _req;
-  },
-
   addHeader: function(name, value) {
-    this.headers = this.headers || {};
-    this.headers[name] = value;
+    this.agent().addHeader(name, value);
   },
 
   removeHeader: function(name) {
-    if (this.headers && this.headers[name]) {
-      delete this.headers[name];
-    }
+    this.agent().removeHeader(name);
   },
 
-  _setHeaders: function(req, headers) {
-    for (var header in headers) {
-      req.set(header, headers[header]);
+  middleware: function (name) {
+    if (!this.middlewares) {
+      return null;
     }
-  },
+    const found = this.middlewares.filter(function (middleware) {
+      return middleware.name === name;
+    });
 
-  _setOptions: function(req, options) {
-    for (var option in options) {
-      req[option](options[option]);
-    }
+    return found.length > 0 ? found[0] : null;
   },
 
   status: function (name, handler) {
-    if (!this.middlewares) {
-      this.register('status', Api.middlewares.status());
+    if (!this.middleware("status")) {
+      this.register("status", Api.middlewares.status());
     }
 
-    var status = this.middlewares.filter(function (middleware) {
-      return middleware.name === 'status';
-    })[0];
+    var status = this.middleware("status");
 
     status.fn.set(name, handler);
 
@@ -253,11 +223,26 @@ Api.prototype = {
     });
   },
 
-  _applyMiddlewares: function (req, service) {
+  _serviceMiddlewares: function (req, service) {
     if (!this.middlewares) {
-      return function () {};
+      return [];
     }
 
+    // Call all the active middlewares for this request and keep a record
+    // if it's returning something.
+    // Explicitly ignore any middleware returning undefined as it throws with
+    // TypeError: Cannot read property 'Symbol(Symbol.iterator)' of undefined
+    return this.middlewares.filter(function (middleware) {
+      if (!service) {
+        return true;
+      }
+      return !service.use || (service.use && service.use[middleware.name] !== false);
+    });
+  },
+
+  _applyMiddlewares: function (req, sid) {
+    // this is the middleware stack that will be called by each active middleware
+    // for this request.
     var stack = [];
 
     var next = function () {
@@ -265,26 +250,22 @@ Api.prototype = {
         stack.push([resolve, reject]);
       });
     };
+    var middlewares = [];
+    var service = this.service(sid);
 
-    this.middlewares
-      .filter(function (middleware) {
-        if (!service) {
-          return true;
-        }
-        return !service.use || (service.use && service.use[middleware.name] !== false);
-      })
-      .forEach(function (middleware, index) {
-        middleware.fn(req, next, service);
-      }, this);
+    this._serviceMiddlewares(req, service).forEach(function (middleware) {
+      // call each middleware function and push every result to the `middlewares`
+      // array to wait for any pending promise
+      var result = middleware.fn(req, next, service);
+      if ((typeof result === "object") && result.then && (typeof result.then === "function")) {
+        middlewares.push(result);
+      }
+    }, this);
 
-    return function (err, response) {
-      stack.reverse().forEach(function (promise) {
-        if (err) {
-          return promise[1](err);
-        }
-        return promise[0](response);
-      });
-    };
+    return Promise.resolve({
+      stack: stack.reverse(),
+      pending: middlewares.length ? Promise.any(middlewares) : null
+    });
   }
 };
 
