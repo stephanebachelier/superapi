@@ -1,5 +1,5 @@
 "use strict";
-var Agent = require("./superapi/agent")["default"];
+var Agent = require("superapi/agent")["default"];
 
 function Api(config) {
   // create a hash-liked object where all the services handlers are registered

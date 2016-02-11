@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.20.0
+  @version 0.20.1
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -118,7 +118,7 @@ define("superapi/agent",
     __exports__["default"] = Agent;
   });
 define("superapi/api", 
-  ["./superapi/agent","exports"],
+  ["superapi/agent","exports"],
   function(__dependency1__, __exports__) {
     "use strict";
     var Agent = __dependency1__["default"];
