@@ -152,11 +152,9 @@ define("superapi/agent",
     __exports__["default"] = Agent;
   });
 define("superapi/api", 
-  ["superapi/agent","exports"],
-  function(__dependency1__, __exports__) {
+  ["exports"],
+  function(__exports__) {
     "use strict";
-    var Agent = __dependency1__["default"];
-
     function Api(config) {
       // create a hash-liked object where all the services handlers are registered
       this.api = Object.create(null);
@@ -183,7 +181,7 @@ define("superapi/api",
           if (!Object.prototype.hasOwnProperty(this, name)) {
             // syntatic sugar: install a service handler available on
             // the api instance with service name
-            this.api[name] = Api.serviceHandler(name).bind(this);
+            this.api[name] = Api.defaults.serviceHandler(name).bind(this);
           }
         }
       },
@@ -199,7 +197,7 @@ define("superapi/api",
         if (!agent) {
           throw new Error("missing agent");
         }
-        this._agent = new Agent(agent);
+        this._agent = new Api.defaults.agent(agent);
 
         if (this.config) {
           this._agent.config = this.config;
@@ -358,7 +356,7 @@ define("superapi/api",
 
       status: function (name, handler) {
         if (!this.middleware("status")) {
-          this.register("status", Api.middlewares.status());
+          this.register("status", Api.defaults.middlewares.status());
         }
 
         var status = this.middleware("status");
@@ -558,21 +556,24 @@ define("superapi/service-handler",
     };
   });
 define("superapi", 
-  ["./superapi/api","./superapi/service-handler","./superapi/middlewares/status","exports"],
-  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+  ["./superapi/api","./superapi/agent","./superapi/service-handler","./superapi/middlewares/status","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __exports__) {
     "use strict";
     var Api = __dependency1__["default"];
-    var serviceHandler = __dependency2__["default"];
-    var status = __dependency3__["default"];
+    var Agent = __dependency2__["default"];
+    var serviceHandler = __dependency3__["default"];
+    var status = __dependency4__["default"];
 
     function superapi(config) {
       return new Api(config);
     }
 
-    Api.serviceHandler = serviceHandler;
-
-    Api.middlewares = {
-      status: status
+    Api.defaults = {
+      agent: Agent,
+      serviceHandler: serviceHandler,
+      middlewares: {
+        status: status
+      }
     };
 
     superapi.prototype.Api = Api;

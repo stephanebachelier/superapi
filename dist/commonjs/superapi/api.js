@@ -1,6 +1,4 @@
 "use strict";
-var Agent = require("superapi/agent")["default"];
-
 function Api(config) {
   // create a hash-liked object where all the services handlers are registered
   this.api = Object.create(null);
@@ -27,7 +25,7 @@ Api.prototype = {
       if (!Object.prototype.hasOwnProperty(this, name)) {
         // syntatic sugar: install a service handler available on
         // the api instance with service name
-        this.api[name] = Api.serviceHandler(name).bind(this);
+        this.api[name] = Api.defaults.serviceHandler(name).bind(this);
       }
     }
   },
@@ -43,7 +41,7 @@ Api.prototype = {
     if (!agent) {
       throw new Error("missing agent");
     }
-    this._agent = new Agent(agent);
+    this._agent = new Api.defaults.agent(agent);
 
     if (this.config) {
       this._agent.config = this.config;
@@ -202,7 +200,7 @@ Api.prototype = {
 
   status: function (name, handler) {
     if (!this.middleware("status")) {
-      this.register("status", Api.middlewares.status());
+      this.register("status", Api.defaults.middlewares.status());
     }
 
     var status = this.middleware("status");
