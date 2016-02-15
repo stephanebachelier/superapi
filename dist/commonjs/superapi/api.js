@@ -191,7 +191,7 @@ Api.prototype = {
     if (!this.middlewares) {
       return null;
     }
-    const found = this.middlewares.filter(function (middleware) {
+    var found = this.middlewares.filter(function (middleware) {
       return middleware.name === name;
     });
 

@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.21.0
+  @version 0.21.1
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -313,7 +313,7 @@ define("superapi/api",
         if (!this.middlewares) {
           return null;
         }
-        const found = this.middlewares.filter(function (middleware) {
+        var found = this.middlewares.filter(function (middleware) {
           return middleware.name === name;
         });
 
