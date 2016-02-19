@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.21.1
+  @version 0.21.2
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -298,7 +298,7 @@ define("superapi/api",
         options.data = data;
         options.method = method;
 
-        return Api.serviceHandler(url).call(this, options);
+        return Api.defaults.serviceHandler(url).call(this, options);
       },
 
       addHeader: function(name, value) {

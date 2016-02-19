@@ -176,7 +176,7 @@ Api.prototype = {
     options.data = data;
     options.method = method;
 
-    return Api.serviceHandler(url).call(this, options);
+    return Api.defaults.serviceHandler(url).call(this, options);
   },
 
   addHeader: function(name, value) {
