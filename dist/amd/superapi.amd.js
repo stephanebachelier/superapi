@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.21.2
+  @version 0.21.3
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -377,7 +377,10 @@ define("superapi/api",
           // call each middleware function and push every result to the `middlewares`
           // array to wait for any pending promise
           var result = middleware.fn(req, next, service);
-          if ((typeof result === "object") && result.then && (typeof result.then === "function")) {
+          if (!result) {
+            return;
+          }
+          if (result && result.then && (typeof result.then === "function")) {
             middlewares.push(result);
           }
         }, this);
