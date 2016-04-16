@@ -141,7 +141,7 @@ This is the base url that will be prefixed to any service path. For a base url l
 
 The idea of this object is to provide some generic headers. As an example superagent does not set the header `X-Requested-With` which is often needed to be set with the value of `XMLHttpRequest`.
 
-This the default headers can be:
+Thus the default headers can be:
 
 ```
 {
