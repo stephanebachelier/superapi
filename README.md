@@ -194,6 +194,21 @@ If you want any cookie to be added back when making an XHR request, you must set
 
 The reason while this flag can't be set on a service, is that I don't see any use case for this. Feel free to make a PR with a use case.
 
+### Authorization header
+
+If you need to use Basic HTTP authorization, you can provide the `auth` property to the configuration:
+```
+{
+  // ...
+  auth: {
+    user: 'foo',
+    pass: 'bar'
+  }
+}
+```
+
+Both `user` and `pass` property have `''` as default value.
+
 ### Setting headers at runtime.
 
 There may be some use cases where you need to set a header at runtime after the global configuration step. One example could be some specific header that an API sent you and that you must send back with each request afterwards.
