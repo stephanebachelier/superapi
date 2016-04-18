@@ -97,6 +97,11 @@ define("superapi/agent",
           _req.withCredentials();
         }
 
+        var auth = this.config.auth;
+        if (auth) {
+          this._setAuth(_req, auth);
+        }
+
         return _req;
       },
 
@@ -121,6 +126,14 @@ define("superapi/agent",
         for (var option in options) {
           req[option](options[option]);
         }
+      },
+
+      _setAuth: function (req, auth) {
+        if (!auth) {
+          return;
+        }
+
+        _req.auth(auth.user || "", auth.pass || "");
       },
 
       handleResponse: function (request, response) {
@@ -387,42 +400,41 @@ define("superapi/api",
         // Explicitly ignore any middleware returning undefined as it throws with
         // TypeError: Cannot read property 'Symbol(Symbol.iterator)' of undefined
         return this.middlewares.filter(function (middleware) {
-          if (!service) {
+          if (!service || !service.use) {
             return true;
           }
-          return !service.use || (service.use && service.use[middleware.name] !== false);
+          return service.use && service.use[middleware.name] !== false;
         });
       },
 
       _applyMiddlewares: function (req, sid) {
+        var service = this.service(sid);
+        var middlewares = this._serviceMiddlewares(req, service);
+
         // this is the middleware stack that will be called by each active middleware
         // for this request.
-        var stack = [];
-
-        var next = function () {
+        var agent = this.agent();
+        var next = function (index, response) {
           return new Promise(function (resolve, reject) {
             stack.push([resolve, reject]);
+
+            if (index === middlewares.length - 1) {
+              resolve(agent.handleResponse(req));
+            }
           });
         };
-        var middlewares = [];
-        var service = this.service(sid);
 
-        this._serviceMiddlewares(req, service).forEach(function (middleware) {
-          // call each middleware function and push every result to the `middlewares`
-          // array to wait for any pending promise
-          var result = middleware.fn(req, next, service);
-          if (!result) {
-            return;
-          }
-          if (result && result.then && (typeof result.then === "function")) {
-            middlewares.push(result);
+        var result = Promise.resolve();
+        middlewares.forEach(function (m, i) {
+          const res = m.fn(req, next.bind(this, i), service);
+          if (res) {
+            result = result.then(typeof res === 'function' ? res : function () {
+              return res;
+            });
           }
         }, this);
 
-        return Promise.resolve({
-          stack: stack.reverse(),
-          pending: middlewares.length ? Promise.any(middlewares) : null
-        });
+        return result;
       }
     };
 
@@ -480,6 +492,34 @@ define("superapi/middlewares/status",
       return middleware;
     };
   });
+define("superapi/middlewares/trace", 
+  ["exports"],
+  function(__exports__) {
+    "use strict";
+    __exports__["default"] = function (config) {
+      config = config || {};
+      var log = config.log || null;
+
+      var timer = (window.performance || {
+        now: Date.now
+      });
+
+      return function (req, next) {
+        if (!log) {
+          return;
+        }
+
+        var start = timer.now();
+        next()
+          .then(function (res) {
+            log(timer.now() - start);
+          })
+          .catch(function (error) {
+            log(timer.now() - start);
+          });
+      };
+    };
+  });
 define("superapi/service-handler", 
   ["exports"],
   function(__exports__) {
@@ -514,7 +554,7 @@ define("superapi/service-handler",
           var result = function (resolver, middlewares) {
             return function (error, response) {
               if (middlewares) {
-                middlewares.forEach(function (middleware) {
+                middlewares.reverse().forEach(function (middleware) {
                   if (error) {
                     middleware[1](error);
                   }
@@ -530,21 +570,12 @@ define("superapi/service-handler",
             }
           }
 
-          var failure;
-          var success;
-          var middlewares;
-
+          var stack = [];
+          var failure = result(function (err, res) { reject(err); }, stack);
+          var success = result(function (err, res) { resolve(res); }, stack);
           var agent = this.agent();
 
-          return this._applyMiddlewares(req, sid)
-            .then(function (data) {
-              middlewares = data.stack;
-
-              failure = result(function (err, res) { reject(err); }, middlewares);
-              success = result(function (err, res) { resolve(res); }, middlewares);
-
-              return data.pending;
-            })
+          return this._applyMiddlewares(req, sid, stack)
             .then(function (response) {
               return agent.handleResponse(req, response);
             })

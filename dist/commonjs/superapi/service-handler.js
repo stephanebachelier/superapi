@@ -29,7 +29,7 @@ exports["default"] = function serviceHandler (sid) {
       var result = function (resolver, middlewares) {
         return function (error, response) {
           if (middlewares) {
-            middlewares.forEach(function (middleware) {
+            middlewares.reverse().forEach(function (middleware) {
               if (error) {
                 middleware[1](error);
               }
@@ -45,21 +45,12 @@ exports["default"] = function serviceHandler (sid) {
         }
       }
 
-      var failure;
-      var success;
-      var middlewares;
-
+      var stack = [];
+      var failure = result(function (err, res) { reject(err); }, stack);
+      var success = result(function (err, res) { resolve(res); }, stack);
       var agent = this.agent();
 
-      return this._applyMiddlewares(req, sid)
-        .then(function (data) {
-          middlewares = data.stack;
-
-          failure = result(function (err, res) { reject(err); }, middlewares);
-          success = result(function (err, res) { resolve(res); }, middlewares);
-
-          return data.pending;
-        })
+      return this._applyMiddlewares(req, sid, stack)
         .then(function (response) {
           return agent.handleResponse(req, response);
         })

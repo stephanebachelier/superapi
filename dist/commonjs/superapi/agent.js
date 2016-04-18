@@ -54,6 +54,11 @@ Agent.prototype = {
       _req.withCredentials();
     }
 
+    var auth = this.config.auth;
+    if (auth) {
+      this._setAuth(_req, auth);
+    }
+
     return _req;
   },
 
@@ -78,6 +83,14 @@ Agent.prototype = {
     for (var option in options) {
       req[option](options[option]);
     }
+  },
+
+  _setAuth: function (req, auth) {
+    if (!auth) {
+      return;
+    }
+
+    _req.auth(auth.user || "", auth.pass || "");
   },
 
   handleResponse: function (request, response) {
