@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.22.0
+  @version 0.22.1
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -373,7 +373,7 @@ define("superapi/api",
         });
       },
 
-      _applyMiddlewares: function (req, sid) {
+      _applyMiddlewares: function (req, sid, stack) {
         var service = this.service(sid);
         var middlewares = this._serviceMiddlewares(req, service);
 

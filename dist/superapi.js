@@ -407,7 +407,7 @@ define("superapi/api",
         });
       },
 
-      _applyMiddlewares: function (req, sid) {
+      _applyMiddlewares: function (req, sid, stack) {
         var service = this.service(sid);
         var middlewares = this._serviceMiddlewares(req, service);
 
