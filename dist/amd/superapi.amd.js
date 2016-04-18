@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.22.1
+  @version 0.22.2
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -392,7 +392,7 @@ define("superapi/api",
 
         var result = Promise.resolve();
         middlewares.forEach(function (m, i) {
-          const res = m.fn(req, next.bind(this, i), service);
+          var res = m.fn(req, next.bind(this, i), service);
           if (res) {
             result = result.then(typeof res === 'function' ? res : function () {
               return res;

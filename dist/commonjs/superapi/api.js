@@ -257,7 +257,7 @@ Api.prototype = {
 
     var result = Promise.resolve();
     middlewares.forEach(function (m, i) {
-      const res = m.fn(req, next.bind(this, i), service);
+      var res = m.fn(req, next.bind(this, i), service);
       if (res) {
         result = result.then(typeof res === 'function' ? res : function () {
           return res;
