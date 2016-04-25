@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.22.2
+  @version 0.23.0
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -390,17 +390,15 @@ define("superapi/api",
           });
         };
 
-        var result = Promise.resolve();
-        middlewares.forEach(function (m, i) {
-          var res = m.fn(req, next.bind(this, i), service);
-          if (res) {
-            result = result.then(typeof res === 'function' ? res : function () {
-              return res;
-            });
+        var iterator = Promise.resolve(middlewares.map(function (m, i) {
+          return function () {
+            return m.fn ? m.fn(req, next.bind(this, i), service) : null;
           }
-        }, this);
+        }));
 
-        return result;
+        return iterator.reduce(function (response, f) {
+          return response ? response : f();
+        }, null);
       }
     };
 
