@@ -262,7 +262,14 @@ Api.prototype = {
     }));
 
     return iterator.reduce(function (response, f) {
-      return response ? response : f();
+      return response ? response : Promise.resolve(f()).then(function (data) {
+        return data ? data : response;
+      }).catch(function (error) {
+        if (response) {
+          return response;
+        }
+        throw error;
+      });
     }, null);
   }
 };

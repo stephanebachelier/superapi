@@ -1,6 +1,6 @@
 /**
   @module superapi
-  @version 0.23.0
+  @version 0.23.1
   @copyright Stéphane Bachelier <stephane.bachelier@gmail.com>
   @license MIT
   */
@@ -397,7 +397,14 @@ define("superapi/api",
         }));
 
         return iterator.reduce(function (response, f) {
-          return response ? response : f();
+          return response ? response : Promise.resolve(f()).then(function (data) {
+            return data ? data : response;
+          }).catch(function (error) {
+            if (response) {
+              return response;
+            }
+            throw error;
+          });
         }, null);
       }
     };
